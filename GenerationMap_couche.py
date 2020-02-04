@@ -89,30 +89,28 @@ def initmap():
 
 
 #creation map
-def creationmap():
+def creationterre():
     crea_time=time.time()
     #ligne_time=time.time()
     taille=0
     gr=[]
     taillemap=hauteur*longueur
-    for i in range (0,10):
+    for i in range (0,longueur):
         u=random.randint(1,longueur)
         u=int(taillemap/u)
         taille=random.randint(1,u)
-        print(taille)
         x=random.randint(0,longueur-1)
         y=random.randint(0,hauteur-1)
-        terr=random.randint(3,len(poss))
+        terr=pln
         map[x][y]=terr
         for b in range (1,taille):
             caseadj=caseadjacente(map,x,y)
-            co=random.randint(1,len(caseadj)-1)
+            co=random.randint(0,len(caseadj)-1)
             x1=caseadj[co][0]
             y1=caseadj[co][1]
-            if map[x1][y1]==ocn:
-                map[x1][y1]=terr
-                x=x1
-                y=y1
+            map[x1][y1]=terr
+            x=x1
+            y=y1
             caseadj.clear()
         ran=[]
         ran=poss[:]
@@ -120,11 +118,7 @@ def creationmap():
         adj,diag=adjacence(map,x,y)
         ran.clear()
         modul=1
-        if modul==0:
-            print("Creation ligne : ", i)
-            #print("Temps d execution : %s secondes ---" % (time.time() - ligne_time))
-            #ligne_time=time.time()
-        print("Duree de generation de la map : %s secondes ---" % (time.time() - crea_time))
+    print("Duree de generation de la map : %s secondes ---" % (time.time() - crea_time))
     return map
 
 #ressource map
@@ -358,15 +352,15 @@ if (auto=='n' or auto=='non'):
     if (html=='o' or html=='oui'):
         nomhtml=quest("Nom du fichier de l export (.html)")
 else :
-    longueur=20
-    hauteur=20
+    longueur=200
+    hauteur=200
     aff="non"
     html="oui"
     fic="rien"
 start_time=time.time()
 map=initmap()
 if (fic=='r' or fic=='e' or fic=='rien' or fic=='ecrire' or fic=='ecriture'):
-    map=creationmap()
+    map=creationterre()
     mapr=ressourcemap()
     if (fic=='e'):
         ecriremap(nomfic)

@@ -1,7 +1,11 @@
+#code modif: #modif_NL_2
+
 import random
 import re
 import time
 import csv
+import os.path #modif_NL_2
+from urllib.parse import urljoin #modif_NL_2
 
 #fixe
 poss=[1,2,3,4,5]
@@ -27,7 +31,14 @@ qu="rien"
 nomhtml="export.html"
 
 
-#taille map
+# modif_NL_2{
+def readProfile(profileName):
+	with open("includ.py", 'w') as inc:
+		inc.write("from "+profileName+" import *")
+# }modif_NL_2
+
+
+# taille map
 def taille():
     print("Taille de votre map")
     strlongueur=str(input("Longueur : "))
@@ -84,7 +95,7 @@ def initmap():
     for i in range (0,hauteur):
         map.append([])
         for j in range (0,longueur):
-            map[i].append(1)
+            map[i].append(0)
     return map
 
 
@@ -92,39 +103,76 @@ def initmap():
 def creationmap():
     crea_time=time.time()
     #ligne_time=time.time()
-    taille=0
-    gr=[]
-    taillemap=hauteur*longueur
-    for i in range (0,10):
-        u=random.randint(1,longueur)
-        u=int(taillemap/u)
-        taille=random.randint(1,u)
-        print(taille)
-        x=random.randint(0,longueur-1)
-        y=random.randint(0,hauteur-1)
-        terr=random.randint(3,len(poss))
-        map[x][y]=terr
-        for b in range (1,taille):
-            caseadj=caseadjacente(map,x,y)
-            co=random.randint(1,len(caseadj)-1)
-            x1=caseadj[co][0]
-            y1=caseadj[co][1]
-            if map[x1][y1]==ocn:
-                map[x1][y1]=terr
-                x=x1
-                y=y1
-            caseadj.clear()
-        ran=[]
-        ran=poss[:]
-        n=len(poss)*2
-        adj,diag=adjacence(map,x,y)
-        ran.clear()
-        modul=1
+    for i in range (0,hauteur):
+        for j in range (0,longueur):
+            ran=[]
+            ran=poss[:]
+            multi=random.randint(0,2)
+            for b in range (0,multi):
+                ran.append(pln)
+            n=len(poss)*2
+            if (map[i-1][j]!=0):
+                if (map[i-1][j]==mont):
+                    multi=random.randint(0,2)
+                    for b in range(0,multi):
+                        ran.append(mont)
+                    multi=random.randint(0,2)
+                    for b in range(0,multi):
+                        ran.append(col)
+                elif (map[i-1][j]==ocn):
+                    multi=random.randint(0,2)
+                    for b in range(0,multi):
+                        ran.append(ocn)
+                    multi=random.randint(0,2)
+                    for b in range(0,multi):
+                        ran.append(mer)
+                else :
+                    multi = random.randint(1,n-1)
+                    for b in range(0,multi):
+                        ran.append(map[i-1][j])
+            if (map[i][j-1]!=0):
+                if (map[i][j-1]==mont):
+                    multi=random.randint(0,1)
+                    for b in range(0,multi):
+                        ran.append(mont)
+                    multi=random.randint(0,1)
+                    for b in range(0,multi):
+                        ran.append(col)
+                elif (map[i][j-1]==ocn):
+                    multi=random.randint(0,2)
+                    for b in range(0,multi):
+                        ran.append(ocn)
+                    multi=random.randint(0,2)
+                    for b in range(0,multi):
+                        ran.append(mer)
+                else :
+                    multi = random.randint(1,n-1)
+                    for b in range(0,multi):
+                        ran.append(map[i][j-1])
+            n=1
+            if (map[i-1][j-1]!=0):
+                multi = random.randint(0,n)
+                for b in range(0,multi):
+                    ran.append(map[i-1][j-1])
+            if (map[i][j-2]!=0):
+                multi = random.randint(0,n)
+                for b in range(0,multi):
+                    ran.append(map[i][j-2])
+            if (map[i-2][j]!=0):
+                multi = random.randint(0,n)
+                for b in range(0,multi):
+                    ran.append(map[i-2][j])
+            n=len(ran)
+            #print(ran)
+            v = random.randint(0,n-1)
+            map[i][j]=ran[v]
+            ran.clear()
+        modul=i%50
         if modul==0:
             print("Creation ligne : ", i)
             #print("Temps d execution : %s secondes ---" % (time.time() - ligne_time))
             #ligne_time=time.time()
-        print("Duree de generation de la map : %s secondes ---" % (time.time() - crea_time))
+    print("Duree de generation de la map : %s secondes ---" % (time.time() - crea_time))
     return map
 
 #ressource map
@@ -153,54 +201,6 @@ def ressourcemap():
 
 
 #fonction qui regarde si type case n est adjacent a la case actuelle
-def adjacence(map,i,j):
-    adj=[]
-    diag=[]
-    if (j>0):
-        adj.append(map[i][j-1])
-    if (i>0):
-        adj.append(map[i-1][j])
-    if (j<longueur-1):
-        adj.append(map[i][j+1])
-    if (i<hauteur-1):
-        adj.append(map[i+1][j])
-    if (j<longueur-2):
-        diag.append(map[i][j+2])
-    if (i<hauteur-2):
-        diag.append(map[i+2][j])
-    if (j>1):
-        diag.append(map[i][j-2])
-    if (i>1):
-        diag.append(map[i-2][j])
-    if (i>0 and j>0):
-        diag.append(map[i-1][j-1])
-    if (i>0 and j<longueur-1):
-        diag.append(map[i-1][j+1])
-    if (i<hauteur-1 and j>0):
-        diag.append(map[i+1][j-1])
-    if (i<hauteur-1 and j<longueur-1):
-        diag.append(map[i+1][j+1])
-    return adj,diag
-
-
-def caseadjacente(map,i,j):
-    caseadj=[]
-    if (j>0):
-        caseadj.append([i,j-1])
-    if (i>0):
-        caseadj.append([i-1,j])
-    if (j<longueur-1):
-        caseadj.append([i,j+1])
-    if (i<hauteur-1):
-        caseadj.append([i+1,j])
-    return caseadj
-
-
-def recherche(L,x):
-    for i in range(0,len(L)):
-        if (L[i]==x):
-            return True
-    return False
 
 #fct qui regarde si type case n est present en diagonale de la case traite
 
@@ -267,7 +267,8 @@ def quest(text):
 def quest6(text,V):
     print(text,end='')
     quest=str(input(" ? "))
-    while (quest!=V[0] and quest!=V[1] and quest!=V[2] and quest!=V[3] and quest!=V[4] and quest!=V[5]):
+    #while (quest!=V[0] and quest!=V[1] and quest!=V[2] and quest!=V[3] and quest!=V[4] and quest!=V[5]):
+    while (quest not in V):
         print("Erreur!")
         print(text,end='')
         quest=str(input(" ? "))
@@ -279,7 +280,8 @@ def question():
     lp=len(poss)
     print("Lecture, ecriture ou rien")
     fic=str(input("l,e,r : "))
-    while (fic!='r' and fic!='e' and fic!='l' and fic!='lire' and fic!='lecture' and fic!='ecrire' and fic!='ecriture' and fic!='rien'):
+    #while (fic!='r' and fic!='e' and fic!='l' and fic!='lire' and fic!='lecture' and fic!='ecrire' and fic!='ecriture' and fic!='rien'):
+    while (fic not in ["r", "e", "l", "lire", "lecture", "ecrire", "ecriture", "rien"]):
         print("Erreur!")
         print("Lecture, ecriture ou rien")
         fic=str(input("l,e,r : "))
@@ -290,40 +292,41 @@ def question():
 def yesno( text):
     print(text,end='')
     qu=str(input(" : "))
-    while (qu!="n" and qu!="o" and qu!="non" and qu!="oui"):
+    #while (qu!="n" and qu!="o" and qu!="non" and qu!="oui"):
+    while (not qu in ["n", "o", "non", "oui"]):
         print("Erreur")
         print(text,end='')
         qu=str(input(" : "))     
     return qu
 
 
-#### export html
+# export html
 BiomeColors = ["#000000", "#3c4adb","#67c1fa", "#54d239","#ba762d","#afafaf"]
 ResColors = ["#000000", "#f62bff", "#f4ff00", "#73ff55", "#ff2b2b"]
-def export_html(L,nomhtml):
+def export_html(L, nomhtml):
     export_time=time.time()
     with open(nomhtml, 'w') as fichier:
 	    fichier.write("<!doctype html>\n<html>\n<head>\n<style>\n .td\n { width:40px; height:40px;}\n")
-	    #couleurs des cases en fonction du biome/type de terrain :
+	    # couleurs des cases en fonction du biome/type de terrain :
 	    for i in range(len(BiomeColors)):
 	    	fichier.write('.d'+str(i)+'\n{background-color:'+BiomeColors[i]+';}\n')
-	    #couleurs de texte en fonction des ressources:
+	    # couleurs de texte en fonction des ressources:
 	    for i in range(len(ResColors)):
 	    	fichier.write('.R'+str(i)+'\n{color:'+ResColors[i]+';}\n')
 	    fichier.write('</style>\n<meta charset="utf-8">\n</head>\n<body>\n<table border="0">\n')
-	    ligne=0
+	    ligne = 0
 	    #ligne_time=time.time()
 	    for i in range (0,hauteur):
-	        ligne=ligne+1
+	        ligne = ligne+1
 	        fichier.write( "			<tr>\n")
 	        for j in range (0,longueur):
 	            fichier.write('<td class="d'+str(map[i][j])+'">'+"<pre class=R"+str(mapr[i][j])+" > "+str(map[i][j])+"|"+str(mapr[i][j])+" </pre>"+"</td>\n")
 	        fichier.write("			</tr>\n")
-	        modul=ligne%50
-	        if modul==0:
+	        modul = ligne%50
+	        if modul == 0:
 	            print("Export ligne : ", ligne)
-	            #print("Temps d execution : %s secondes ---" % (time.time() - ligne_time))
-	            #ligne_time=time.time()
+	            # print("Temps d execution : %s secondes ---" % (time.time() - ligne_time))
+	            # ligne_time=time.time()
 	    fichier.write("		</table>\n"+"	</body>\n"+"</html>")
     print("Duree l'export HTML : %s secondes ---" % (time.time() - export_time))
     
@@ -340,29 +343,45 @@ def Open_html(nomhtml):
 
 
 #main
+
+
 print ("\tProgramme de gÃ©nÃ©ration de map alÃ©atoire par Audran")
-auto=yesno("Mode auto")
-V=[]
-if (auto=='n' or auto=='non'):
-    V=["e","l","r","ecriture","lecture","rien"]
-    fic=quest6("Lecture,ecriture ou rien",V)
-    if (fic=='e' or fic=='ecriture'):
-        nomfic=quest("Nom du fichier de destination (.txt)")
-    if (fic=='r' or fic=='e' or fic=='rien' or fic=='ecrire' or fic=='ecriture') :
-        longueur,hauteur=taille()
-    else :
-        nomfic=quest("Nom du fichier de lecture (.txt)")
-        longueur,hauteur=lirecaracmap(nomfic)
-    aff=yesno("Affichage? o/n ")
-    html=yesno("Export Html? o/n")
-    if (html=='o' or html=='oui'):
-        nomhtml=quest("Nom du fichier de l export (.html)")
-else :
-    longueur=20
-    hauteur=20
-    aff="non"
-    html="oui"
-    fic="rien"
+if(yesno("import profile? (o/n)") in ["non", "n"]):
+	with open("includ.py", 'w') as inc:
+		inc.write("")
+	auto=yesno("Mode auto")
+	V=[]
+	if (auto=='n' or auto=='non'):
+	    V=["e","l","r","ecriture","lecture","rien"]
+	    fic=quest6("Lecture,ecriture ou rien",V)
+	    if (fic=='e' or fic=='ecriture'):
+	        nomfic=quest("Nom du fichier de destination (.txt)")
+	    if (fic=='r' or fic=='e' or fic=='rien' or fic=='ecrire' or fic=='ecriture') :
+	        longueur,hauteur=taille()
+	    else :
+	        nomfic=quest("Nom du fichier de lecture (.txt)")
+	        longueur,hauteur=lirecaracmap(nomfic)
+	    aff=yesno("Affichage? o/n ")
+	    html=yesno("Export Html? o/n")
+	    if (html=='o' or html=='oui'):
+	        nomhtml=quest("Nom du fichier de l export (.html)")
+	else:
+			longueur=20
+			hauteur=20
+			aff="non"
+			html="oui"
+			fic="rien"
+else:
+	import glob, dialogs
+	profileList = glob.glob('profile*.py')
+	profileList = list(i[:-3] for i in profileList) # [:-3] pour enlever .py
+	includName = dialogs.list_dialog(title='hello', items=profileList, multiple=False)
+	'''for i in range(len(profileList)):
+		print(i+1, " : ", profileList[i])
+	includName=profileList[int(input("profile number : "))-1]'''
+	readProfile(includName)
+from includ import *
+
 start_time=time.time()
 map=initmap()
 if (fic=='r' or fic=='e' or fic=='rien' or fic=='ecrire' or fic=='ecriture'):
