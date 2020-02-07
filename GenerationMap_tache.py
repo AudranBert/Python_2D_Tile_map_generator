@@ -92,39 +92,90 @@ def initmap():
 def creationmap():
     crea_time=time.time()
     #ligne_time=time.time()
-    taille=0
-    gr=[]
-    taillemap=hauteur*longueur
-    for i in range (0,10):
-        u=random.randint(1,longueur)
-        u=int(taillemap/u)
-        taille=random.randint(1,u)
-        print(taille)
-        x=random.randint(0,longueur-1)
-        y=random.randint(0,hauteur-1)
-        terr=random.randint(3,len(poss))
-        map[x][y]=terr
-        for b in range (1,taille):
-            caseadj=caseadjacente(map,x,y)
-            co=random.randint(1,len(caseadj)-1)
-            x1=caseadj[co][0]
-            y1=caseadj[co][1]
-            if map[x1][y1]==ocn:
-                map[x1][y1]=terr
-                x=x1
-                y=y1
-            caseadj.clear()
-        ran=[]
-        ran=poss[:]
-        n=len(poss)*2
-        adj,diag=adjacence(map,x,y)
-        ran.clear()
-        modul=1
+    for i in range (0,hauteur):
+        for j in range (0,longueur):
+            ran=[]
+            ran=poss[:]
+            multi=random.randint(0,2)
+            for b in range (0,multi):
+                ran.append(pln)
+            n=len(poss)*2
+            if (map[i-1][j]!=0):
+                if (map[i-1][j]==mont):
+                    adj,diag=adjacence(map,i,j)
+                    if (recherche(adj,ocn)):
+                        multi=random.randint(0,2)
+                        for b in range(0,multi):
+                            ran.append(ocn)
+                        multi=random.randint(0,2)
+                        for b in range(0,multi):
+                            ran.append(mer)
+                    if (recherche(adj,mont)):
+                        for b in range(0,multi):
+                            ran.append(mont)
+                        multi=random.randint(0,2)
+                        for b in range(0,multi):
+                            ran.append(col)
+                    multi=random.randint(0,2)
+                    for b in range(0,multi):
+                        ran.append(mont)
+                    multi=random.randint(0,2)
+                    for b in range(0,multi):
+                        ran.append(col)
+                elif (map[i-1][j]==ocn):
+                    multi=random.randint(0,2)
+                    for b in range(0,multi):
+                        ran.append(ocn)
+                    multi=random.randint(0,2)
+                    for b in range(0,multi):
+                        ran.append(mer)
+                else :
+                    multi = random.randint(1,n-1)
+                    for b in range(0,multi):
+                        ran.append(map[i-1][j])
+            if (map[i][j-1]!=0):
+                if (map[i][j-1]==mont):
+                    multi=random.randint(0,1)
+                    for b in range(0,multi):
+                        ran.append(mont)
+                    multi=random.randint(0,1)
+                    for b in range(0,multi):
+                        ran.append(col)
+                elif (map[i][j-1]==ocn):
+                    multi=random.randint(0,2)
+                    for b in range(0,multi):
+                        ran.append(ocn)
+                    multi=random.randint(0,2)
+                    for b in range(0,multi):
+                        ran.append(mer)
+                else :
+                    multi = random.randint(1,n-1)
+                    for b in range(0,multi):
+                        ran.append(map[i][j-1])
+            n=1
+            if (map[i-1][j-1]!=0):
+                multi = random.randint(0,n)
+                for b in range(0,multi):
+                    ran.append(map[i-1][j-1])
+            if (map[i][j-2]!=0):
+                multi = random.randint(0,n)
+                for b in range(0,multi):
+                    ran.append(map[i][j-2])
+            if (map[i-2][j]!=0):
+                multi = random.randint(0,n)
+                for b in range(0,multi):
+                    ran.append(map[i-2][j])
+            n=len(ran)
+            #print(ran)
+            v = random.randint(0,n-1)
+            map[i][j]=ran[v]
+            ran.clear()
+        modul=i%50
         if modul==0:
             print("Creation ligne : ", i)
             #print("Temps d execution : %s secondes ---" % (time.time() - ligne_time))
             #ligne_time=time.time()
-        print("Duree de generation de la map : %s secondes ---" % (time.time() - crea_time))
+    print("Duree de generation de la map : %s secondes ---" % (time.time() - crea_time))
     return map
 
 #ressource map
@@ -178,22 +229,9 @@ def adjacence(map,i,j):
         diag.append(map[i-1][j+1])
     if (i<hauteur-1 and j>0):
         diag.append(map[i+1][j-1])
-    if (i<hauteur-1 and j<longueur-1):
+    if (i<hauteur and j<longueur):
         diag.append(map[i+1][j+1])
     return adj,diag
-
-
-def caseadjacente(map,i,j):
-    caseadj=[]
-    if (j>0):
-        caseadj.append([i,j-1])
-    if (i>0):
-        caseadj.append([i-1,j])
-    if (j<longueur-1):
-        caseadj.append([i,j+1])
-    if (i<hauteur-1):
-        caseadj.append([i+1,j])
-    return caseadj
 
 
 def recherche(L,x):
@@ -298,38 +336,37 @@ def yesno( text):
 
 
 #### export html
-BiomeColors = ["#000000", "#3c4adb","#67c1fa", "#54d239","#ba762d","#afafaf"]
-ResColors = ["#000000", "#f62bff", "#f4ff00", "#73ff55", "#ff2b2b"]
+colors = ["#000000", "#3c4adb","#67c1fa", "#54d239","#ba762d","#afafaf"]
 def export_html(L,nomhtml):
     export_time=time.time()
-    with open(nomhtml, 'w') as fichier:
-	    fichier.write("<!doctype html>\n<html>\n<head>\n<style>\n .td\n { width:40px; height:40px;}\n")
-	    #couleurs des cases en fonction du biome/type de terrain :
-	    for i in range(len(BiomeColors)):
-	    	fichier.write('.d'+str(i)+'\n{background-color:'+BiomeColors[i]+';}\n')
-	    #couleurs de texte en fonction des ressources:
-	    for i in range(len(ResColors)):
-	    	fichier.write('.R'+str(i)+'\n{color:'+ResColors[i]+';}\n')
-	    fichier.write('</style>\n<meta charset="utf-8">\n</head>\n<body>\n<table border="0">\n')
-	    ligne=0
-	    #ligne_time=time.time()
-	    for i in range (0,hauteur):
-	        ligne=ligne+1
-	        fichier.write( "			<tr>\n")
-	        for j in range (0,longueur):
-	            fichier.write('<td class="d'+str(map[i][j])+'">'+"<pre class=R"+str(mapr[i][j])+" > "+str(map[i][j])+"|"+str(mapr[i][j])+" </pre>"+"</td>\n")
-	        fichier.write("			</tr>\n")
-	        modul=ligne%50
-	        if modul==0:
-	            print("Export ligne : ", ligne)
-	            #print("Temps d execution : %s secondes ---" % (time.time() - ligne_time))
-	            #ligne_time=time.time()
-	    fichier.write("		</table>\n"+"	</body>\n"+"</html>")
-    print("Duree l'export HTML : %s secondes ---" % (time.time() - export_time))
-    
+    html = "<!doctype html>\n"+"<html>\n"+"	<head>\n"
+    html +='<style>\n.td\n{ width:40px;\nheight:40px;}\n.d1\n{background-color:#3c4adb;}\n.d2\n{background-color:#67c1fa;}\n.d3\n{background-color:#54d239;}\n.d4\n{background-color:#ba762d;}\n.d5\n{background-color:#afafaf;}\n'
+    #couleurs de tecte en fonction des ressources:
+    html +=".R1 {\n color:#f62bff; \n }\n .R2 {\n color:#f4ff00;\n } \n .R3 {\n color:#73ff55; \n }\n .R4 {\n color:#ff2b2b; \n }\n </style>"
+    html += '		<meta charset="utf-8">\n'+"	</head>\n"
+    html += "	<body>\n"+'		<table border="0">\n'
+    fichier=open(nomhtml,"w")
+    fichier.write(html)
+    html=""
+    ligne=0
+    #ligne_time=time.time()
+    for i in range (0,hauteur):
+        ligne=ligne+1
+        fichier.write( "			<tr>\n")
+        for j in range (0,longueur):
+            fichier.write('<td class="d'+str(map[i][j])+'">'+"<pre class=R"+str(mapr[i][j])+" > "+str(map[i][j])+"|"+str(mapr[i][j])+" </pre>"+"</td>\n")
+        fichier.write("			</tr>\n")
+        modul=ligne%50
+        if modul==0:
+            print("Export ligne : ", ligne)
+            #print("Temps d execution : %s secondes ---" % (time.time() - ligne_time))
+            #ligne_time=time.time()
+        fichier.write(html)
+    fichier.write("		</table>\n"+"	</body>\n"+"</html>")
+    fichier.close()
+    print("Duree l'export HTML : %s secondes ---" % (time.time() - export_time))    
 
 # ouverture html :
-def Open_html(nomhtml):
     import os
     from urllib.parse import urljoin
     import webbrowser
@@ -340,7 +377,8 @@ def Open_html(nomhtml):
 
 
 #main
-print ("\tProgramme de gÃ©nÃ©ration de map alÃ©atoire par Audran")
+print ("\tProgramme de génération de map aléatoire par Audran")
+print ("\tLes fichiers auront autonomatiquement l'ajout des formats")
 auto=yesno("Mode auto")
 V=[]
 if (auto=='n' or auto=='non'):
@@ -348,18 +386,21 @@ if (auto=='n' or auto=='non'):
     fic=quest6("Lecture,ecriture ou rien",V)
     if (fic=='e' or fic=='ecriture'):
         nomfic=quest("Nom du fichier de destination (.txt)")
+        nomfic=nomfic+".txt"
     if (fic=='r' or fic=='e' or fic=='rien' or fic=='ecrire' or fic=='ecriture') :
         longueur,hauteur=taille()
     else :
         nomfic=quest("Nom du fichier de lecture (.txt)")
+        nomfic=nomfic+".txt"
         longueur,hauteur=lirecaracmap(nomfic)
     aff=yesno("Affichage? o/n ")
     html=yesno("Export Html? o/n")
     if (html=='o' or html=='oui'):
         nomhtml=quest("Nom du fichier de l export (.html)")
+        nomhtml=nomhtml+".html"
 else :
-    longueur=20
-    hauteur=20
+    longueur=250
+    hauteur=250
     aff="non"
     html="oui"
     fic="rien"
@@ -379,6 +420,3 @@ if (html=='oui' or html=='o'):
     export_html(map,nomhtml)
 print("Temps total d execution : %s secondes ---" % (time.time() - start_time)) 
 print("\tGeneration termine !") 
-
-if (html=='oui' or html=='o'):
-    Open_html(nomhtml)
