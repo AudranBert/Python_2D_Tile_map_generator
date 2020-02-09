@@ -93,7 +93,6 @@ def creationterre():
     crea_time=time.time()
     #ligne_time=time.time()
     taille=0
-    gr=[]
     taillemap=hauteur*longueur
     for i in range (0,longueur):
         u=random.randint(1,longueur)
@@ -112,13 +111,95 @@ def creationterre():
             x=x1
             y=y1
             caseadj.clear()
-        ran=[]
-        ran=poss[:]
         n=len(poss)*2
         adj,diag=adjacence(map,x,y)
-        ran.clear()
-        modul=1
-    print("Duree de generation de la map : %s secondes ---" % (time.time() - crea_time))
+    print("Duree de generation des terres emerge : %s secondes ---" % (time.time() - crea_time))
+    return map
+
+
+def creationcolline():
+    crea_time=time.time()
+    #ligne_time=time.time()
+    taille=0
+    taillemap=hauteur*longueur
+    for i in range (0,int(longueur/2)):
+        u=random.randint(int(longueur/2),longueur)
+        u=int(taillemap/u)
+        taille=random.randint(1,u)
+        x=random.randint(0,longueur-1)
+        y=random.randint(0,hauteur-1)
+        while (map[x][y]!=pln):
+            x=random.randint(0,longueur-1)
+            y=random.randint(0,hauteur-1)
+        terr=col
+        map[x][y]=terr
+        for b in range (1,taille):
+            caseadj=caseadjacente(map,x,y)
+            co=random.randint(0,len(caseadj)-1)
+            x1=caseadj[co][0]
+            y1=caseadj[co][1]
+            map[x1][y1]=terr
+            x=x1
+            y=y1
+            caseadj.clear()
+        n=len(poss)*2
+        adj,diag=adjacence(map,x,y)
+    print("Duree de generation des collines : %s secondes ---" % (time.time() - crea_time))
+    return map   
+
+def creationmontagne():
+    crea_time=time.time()
+    #ligne_time=time.time()
+    taille=0
+    ct=0
+    c=0
+    x1=0
+    y1=0
+    for i in range (0,int(longueur/4)):
+        u=random.randint(1,longueur/4)
+        taille=random.randint(1,u)
+        x=random.randint(0,longueur-1)
+        y=random.randint(0,hauteur-1)
+        while (map[x][y]!=col):
+            x=random.randint(0,longueur-1)
+            y=random.randint(0,hauteur-1)
+        terr=mont
+        map[x][y]=terr
+##        print("taille=",taille)
+        for b in range (1,taille):
+            ct=3
+            c=0
+            caseadj=caseadjacente(map,x,y)
+            casediag=casediagonale(map,x,y)
+            while ct>2 and c<6:
+##                print("c=",c)
+                ct=0
+                c=c+1
+                co=random.randint(0,len(caseadj)-1)
+                x1=caseadj[co][0]
+                y1=caseadj[co][1]
+                caseadj1=caseadjacente(map,x1,y1)
+                for i in range (0,len(caseadj1)-1):
+##                    print("i=",i)
+                    x2=caseadj1[i][0]
+                    y2=caseadj1[i][1]
+                    if (map[x2][y2]==mont):
+                        ct=ct+1
+##                        print(ct)
+            co=random.randint(0,len(caseadj)-1)
+            x1=caseadj[co][0]
+            y1=caseadj[co][1]
+            map[x1][y1]=terr
+            x=x1
+            y=y1
+            caseadj.clear()
+        n=len(poss)*2
+        adj,diag=adjacence(map,x,y)
+    print("Duree de generation des montagnes : %s secondes ---" % (time.time() - crea_time))
+    return map   
+
+
+def creationmer():
     return map
 
 #ressource map
@@ -189,6 +270,17 @@ def caseadjacente(map,i,j):
         caseadj.append([i+1,j])
     return caseadj
 
+def casediagonale(map,i,j):
+    casediag=[]
+    if (j>0 and i>0):
+        casediag.append([i-1,j-1])
+    if (i>0 and j<longueur-1):
+        casediag.append([i-1,j+1])
+    if (j<longueur-1 and i<hauteur-1):
+        casediag.append([i+1,j+1])
+    if (i<hauteur-1 and j>0):
+        casediag.append([i+1,j-1])
+    return casediag
 
 def recherche(L,x):
     for i in range(0,len(L)):
@@ -196,7 +288,15 @@ def recherche(L,x):
             return True
     return False
 
-#fct qui regarde si type case n est present en diagonale de la case traite
+def creationmap(map,mapr):
+    map=creationterre()
+    map=creationcolline()
+    map=creationmontagne()
+    map=creationmer()
+    mapr=ressourcemap()
+    return map,mapr
+    
+
 
 #sous map
 
@@ -333,6 +433,7 @@ def Open_html(nomhtml):
 ####
 
 
+
 #main
 print ("\tProgramme de gÃ©nÃ©ration de map alÃ©atoire par Audran")
 auto=yesno("Mode auto")
@@ -360,8 +461,7 @@ else :
 start_time=time.time()
 map=initmap()
 if (fic=='r' or fic=='e' or fic=='rien' or fic=='ecrire' or fic=='ecriture'):
-    map=creationterre()
-    mapr=ressourcemap()
+    map,mapr=creationmap(map,mapr)
     if (fic=='e'):
         ecriremap(nomfic)
 elif (fic=='l' or fic=='lecture'):
