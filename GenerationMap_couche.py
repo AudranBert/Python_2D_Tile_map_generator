@@ -193,7 +193,7 @@ def creationmontagne():
                 x1=caseadj[co][0]
                 y1=caseadj[co][1]
                 caseadj1=caseadjacente(map,x1,y1)
-                for i in range (0,len(caseadj1)-1):
+                for i in range (0,len(caseadj1)):
 ##                    print("i=",i)
                     x2=caseadj1[i][0]
                     y2=caseadj1[i][1]
@@ -214,7 +214,27 @@ def creationmontagne():
 
 
 def creationmer():
-    return map
+        for j in range (0,hauteur):
+                for i in range (0,longueur):
+                        if map[j][i]==ocn:
+                                caseadj=caseadjacente(map,i,j)
+                                for b in range (0,len(caseadj)):
+                                        x1=caseadj[b][0]
+                                        y1=caseadj[b][1]
+                                        if map[y1][x1] in [pln,col,mont]:
+                                                map[j][i]=mer
+##                                if map[j][i]==ocn:
+##                                        casediag=casediagonale(map,i,j)
+####                                        print(casediag)
+##                                        for b in range (0,len(casediag)):
+##                                                x1=caseadj[b][0]
+##                                                y1=caseadj[b][1]
+####                                                print("y1=",y1,"x1=",x1)
+##                                                if map[y1][x1] in [pln,col,mont]:
+##                                                        map[j][i]=mer
+                                                
+                                
+        return map
 
 #ressource map
 def ressourcemap():
@@ -466,8 +486,8 @@ else:
 	
 if(includName == "Auto"):
 	clearInclude()
-	longueur=40
-	hauteur=40
+	longueur=20
+	hauteur=10
 	aff="non"
 	html="oui"
 	fic="rien"
