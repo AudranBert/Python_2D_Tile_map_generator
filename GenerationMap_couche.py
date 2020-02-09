@@ -2,6 +2,11 @@ import random
 import re
 import time
 import csv
+import os.path #modif_NL_2
+import glob #modif_NL_3
+from urllib.parse import urljoin #modif_NL_2
+
+from device_conf import * #config du device pour l'utilisation de dialogs ou pas par exemple
 
 #fixe
 poss=[1,2,3,4,5]
@@ -26,6 +31,13 @@ mapr=[]
 qu="rien"
 nomhtml="export.html"
 
+def includeProfile(profileName):
+	with open("includ.py", 'w') as inc:
+		inc.write("from "+profileName+" import *")
+		
+def clearInclude():
+	with open("includ.py", 'w') as inc:
+		inc.write("")
 
 #taille map
 def taille():
@@ -101,18 +113,19 @@ def creationterre():
         x=random.randint(0,longueur-1)
         y=random.randint(0,hauteur-1)
         terr=pln
-        map[x][y]=terr
+        map[y][x]=terr
         for b in range (1,taille):
             caseadj=caseadjacente(map,x,y)
             co=random.randint(0,len(caseadj)-1)
             x1=caseadj[co][0]
             y1=caseadj[co][1]
-            map[x1][y1]=terr
+##            print("y1= ",y1,"  x1=",x1)
+            map[y1][x1]=terr
             x=x1
             y=y1
             caseadj.clear()
         n=len(poss)*2
-        adj,diag=adjacence(map,x,y)
+##        adj,diag=adjacence(map,x,y)
     print("Duree de generation des terres emerge : %s secondes ---" % (time.time() - crea_time))
     return map
 
@@ -128,22 +141,23 @@ def creationcolline():
         taille=random.randint(1,u)
         x=random.randint(0,longueur-1)
         y=random.randint(0,hauteur-1)
-        while (map[x][y]!=pln):
+        while (map[y][x]!=pln):
             x=random.randint(0,longueur-1)
             y=random.randint(0,hauteur-1)
         terr=col
-        map[x][y]=terr
+        map[y][x]=terr
         for b in range (1,taille):
             caseadj=caseadjacente(map,x,y)
             co=random.randint(0,len(caseadj)-1)
             x1=caseadj[co][0]
             y1=caseadj[co][1]
-            map[x1][y1]=terr
+##            print("y1= ",y1,"  x1=",x1)
+            map[y1][x1]=terr
             x=x1
             y=y1
             caseadj.clear()
         n=len(poss)*2
-        adj,diag=adjacence(map,x,y)
+##        adj,diag=adjacence(map,x,y)
     print("Duree de generation des collines : %s secondes ---" % (time.time() - crea_time))
     return map   
 
@@ -156,15 +170,15 @@ def creationmontagne():
     x1=0
     y1=0
     for i in range (0,int(longueur/4)):
-        u=random.randint(1,longueur/4)
+        u=random.randint(1,int(longueur/4))
         taille=random.randint(1,u)
         x=random.randint(0,longueur-1)
         y=random.randint(0,hauteur-1)
-        while (map[x][y]!=col):
+        while (map[y][x]!=col):
             x=random.randint(0,longueur-1)
             y=random.randint(0,hauteur-1)
         terr=mont
-        map[x][y]=terr
+        map[y][x]=terr
 ##        print("taille=",taille)
         for b in range (1,taille):
             ct=3
@@ -183,18 +197,18 @@ def creationmontagne():
 ##                    print("i=",i)
                     x2=caseadj1[i][0]
                     y2=caseadj1[i][1]
-                    if (map[x2][y2]==mont):
+                    if (map[y2][x2]==mont):
                         ct=ct+1
 ##                        print(ct)
             co=random.randint(0,len(caseadj)-1)
             x1=caseadj[co][0]
             y1=caseadj[co][1]
-            map[x1][y1]=terr
+            map[y1][x1]=terr
             x=x1
             y=y1
             caseadj.clear()
         n=len(poss)*2
-        adj,diag=adjacence(map,x,y)
+##        adj,diag=adjacence(map,x,y)
     print("Duree de generation des montagnes : %s secondes ---" % (time.time() - crea_time))
     return map   
 
@@ -264,9 +278,9 @@ def caseadjacente(map,i,j):
         caseadj.append([i,j-1])
     if (i>0):
         caseadj.append([i-1,j])
-    if (j<longueur-1):
+    if (j<hauteur-1):
         caseadj.append([i,j+1])
-    if (i<hauteur-1):
+    if (i<longueur-1):
         caseadj.append([i+1,j])
     return caseadj
 
@@ -274,11 +288,11 @@ def casediagonale(map,i,j):
     casediag=[]
     if (j>0 and i>0):
         casediag.append([i-1,j-1])
-    if (i>0 and j<longueur-1):
+    if (i>0 and j<hauteur-1):
         casediag.append([i-1,j+1])
-    if (j<longueur-1 and i<hauteur-1):
+    if (j<hauteur-1 and i<longueur-1):
         casediag.append([i+1,j+1])
-    if (i<hauteur-1 and j>0):
+    if (i<longueur-1 and j>0):
         casediag.append([i+1,j-1])
     return casediag
 
@@ -433,46 +447,109 @@ def Open_html(nomhtml):
 ####
 
 
-
 #main
-print ("\tProgramme de gÃ©nÃ©ration de map alÃ©atoire par Audran")
-auto=yesno("Mode auto")
-V=[]
-if (auto=='n' or auto=='non'):
-    V=["e","l","r","ecriture","lecture","rien"]
-    fic=quest6("Lecture,ecriture ou rien",V)
-    if (fic=='e' or fic=='ecriture'):
-        nomfic=quest("Nom du fichier de destination (.txt)")
-    if (fic=='r' or fic=='e' or fic=='rien' or fic=='ecrire' or fic=='ecriture') :
-        longueur,hauteur=taille()
-    else :
-        nomfic=quest("Nom du fichier de lecture (.txt)")
-        longueur,hauteur=lirecaracmap(nomfic)
-    aff=yesno("Affichage? o/n ")
-    html=yesno("Export Html? o/n")
-    if (html=='o' or html=='oui'):
-        nomhtml=quest("Nom du fichier de l export (.html)")
-else :
-    longueur=200
-    hauteur=200
-    aff="non"
-    html="oui"
-    fic="rien"
+
+
+print ("\tProgramme de generation de map aleatoire par Audran")
+
+profileList = glob.glob('profile*.py')
+profileList = list(i[:-3] for i in profileList) # [:-3] pour enlever .py
+profileList.insert(0, "Auto")
+profileList.insert(1, "Manual")
+if device == "iPad":
+	# dialogs required here (see device.conf)
+	includName = dialogs.list_dialog(title='hello', items=profileList, multiple=False)
+else:
+	for i in range(len(profileList)):
+		print(i+1, " : ", profileList[i])
+	includName=profileList[int(input("profile number : "))-1]
+	
+if(includName == "Auto"):
+	clearInclude()
+	longueur=40
+	hauteur=40
+	aff="non"
+	html="oui"
+	fic="rien"
+	nomhtml="export.html"
+elif(includName == "Manual"):
+	clearInclude()
+	V=["e","l","r","ecriture","lecture","rien"]
+	fic=quest6("Lecture,ecriture ou rien",V)
+	if (fic=='e' or fic=='ecriture'):
+		nomfic=quest("Nom du fichier de destination (.txt)")
+	if (fic=='r' or fic=='e' or fic=='rien' or fic=='ecrire' or fic=='ecriture') :
+		longueur,hauteur=taille()
+	else :
+		nomfic=quest("Nom du fichier de lecture (.txt)")
+		longueur,hauteur=lirecaracmap(nomfic)
+	aff=yesno("Affichage? o/n ")
+	html=yesno("Export Html? o/n")
+	if (html=='o' or html=='oui'):
+		nomhtml=quest("Nom du fichier de l export (.html)")
+else:
+		includeProfile(includName)
+
+from includ import *
+
 start_time=time.time()
 map=initmap()
-if (fic=='r' or fic=='e' or fic=='rien' or fic=='ecrire' or fic=='ecriture'):
+if (fic in ["r", "e", "rien", "ecrire", "ecriture"]):
     map,mapr=creationmap(map,mapr)
     if (fic=='e'):
         ecriremap(nomfic)
-elif (fic=='l' or fic=='lecture'):
+elif (fic in ["l", "lecture"]):
         map=liremap(nomfic)
-if (aff=='oui' or aff=='o'):
+if (aff in ["oui", "o"]):
     affichagetm()
     affichagetr()
-if (html=='oui' or html=='o'):
+if (html in ["oui", "o"]):
     export_html(map,nomhtml)
 print("Temps total d execution : %s secondes ---" % (time.time() - start_time)) 
 print("\tGeneration termine !") 
 
-if (html=='oui' or html=='o'):
+if (html in ["oui", "o"]):
     Open_html(nomhtml)
+
+###main
+##print ("\tProgramme de gÃ©nÃ©ration de map alÃ©atoire par Audran")
+##auto=yesno("Mode auto")
+##V=[]
+##if (auto=='n' or auto=='non'):
+##    V=["e","l","r","ecriture","lecture","rien"]
+##    fic=quest6("Lecture,ecriture ou rien",V)
+##    if (fic=='e' or fic=='ecriture'):
+##        nomfic=quest("Nom du fichier de destination (.txt)")
+##    if (fic=='r' or fic=='e' or fic=='rien' or fic=='ecrire' or fic=='ecriture') :
+##        longueur,hauteur=taille()
+##    else :
+##        nomfic=quest("Nom du fichier de lecture (.txt)")
+##        longueur,hauteur=lirecaracmap(nomfic)
+##    aff=yesno("Affichage? o/n ")
+##    html=yesno("Export Html? o/n")
+##    if (html=='o' or html=='oui'):
+##        nomhtml=quest("Nom du fichier de l export (.html)")
+##else :
+##    longueur=200
+##    hauteur=200
+##    aff="non"
+##    html="oui"
+##    fic="rien"
+##start_time=time.time()
+##map=initmap()
+##if (fic=='r' or fic=='e' or fic=='rien' or fic=='ecrire' or fic=='ecriture'):
+##    map,mapr=creationmap(map,mapr)
+##    if (fic=='e'):
+##        ecriremap(nomfic)
+##elif (fic=='l' or fic=='lecture'):
+##        map=liremap(nomfic)
+##if (aff=='oui' or aff=='o'):
+##    affichagetm()
+##    affichagetr()
+##if (html=='oui' or html=='o'):
+##    export_html(map,nomhtml)
+##print("Temps total d execution : %s secondes ---" % (time.time() - start_time)) 
+##print("\tGeneration termine !") 
+##
+##if (html=='oui' or html=='o'):
+##    Open_html(nomhtml)

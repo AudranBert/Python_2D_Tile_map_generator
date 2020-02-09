@@ -1,5 +1,5 @@
-longueur=10
-hauteur=3
+longueur=200
+hauteur=100
 aff="non"
 html="oui"
 fic="rien"
