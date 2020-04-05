@@ -110,102 +110,48 @@ def initmap():
             map[i].append(1)
     return map
 
-def creationratio():
-        ratio=[]
-        surface=hauteur*longueur
-        print(surface)
-        if surface<=200:
-                nbcont=random.randint(1,6)
-                taillecont=int(surface/10)
-                surfaceterre=int(surface/4)
-        elif surface>200 and surface<=2500:
-                nbcont=random.randint(3,int(surface/50))
-                taillecont=int(surface/20)
-                surfaceterre=int(surface/4)
-        elif surface>2500 and surface<=25000:
-                nbcont=int(surface/25)
-                taillecont=int(surface/5)
-                surfaceterre=int(surface/2.5)
-        else :
-                nbcont=int(surface/500)
-                taillecont=int(surface/250)
-                surfaceterre=int(surface/4)
-        ratio.append(surface)
-        ratio.append(nbcont)
-        ratio.append(surfaceterre)
-        ratio.append(taillecont)
-        d2=[1,0.75, 0.66,0.5,0.33,0.25,0.15]
-        d=[0.5,0.4, 0.33,0.25,0.20,0.15,0.10,0.05,0.02]
-        for i in range (0,len(d)):
-##            ratio.append(int(longueur*d[i]))
-##            ratio.append(int(hauteur*d[i]))
-            ratio.append(int(ratio[2]*d[i]))
-        print(ratio[2])
-        return ratio
 
 
-def pourratio(ratio,x):
-        var=0
-        var=int((x*100)/ratio[0])
-        print("var=",var)
-        return var
-
-def creationterre(ratio):
+def creationterre():
     crea_time=time.time()
     #ligne_time=time.time()
     taille=0
-    ct=0
-    taillemap=ratio[0] 
-    for i in range (0,ratio[1]):        #defini le nb de continent
-        if (ct<ratio[2]):
-                c=0
-                x=random.randint(0,longueur-1)
-                y=random.randint(0,hauteur-1)
-                while (map[y][x]!=ocn and c<=4):
-                     c=c+1
-                     x=random.randint(0,longueur-1)
-                     y=random.randint(0,hauteur-1)
-                terr=terre
-                if (map[y][x]!=terr):
-                      map[y][x]=terr
-                      ct=ct+1
-                tailleC=random.randint(1,ratio[3])
-                for b in range (1,int(tailleC)):           #defini la taille des continents
-                        if (ct<ratio[2]):
-##                                c=0
-                                caseadj=caseadjacente(map,x,y)
-                                co=random.randint(0,len(caseadj)-1)
-                                x1=caseadj[co][0]
-                                y1=caseadj[co][1]
-##                                while (map[y1][x1]!=ocn and c<=4):
-##                                        co=random.randint(0,len(caseadj)-1)
-##                                        c=c+1
-##                                        x1=caseadj[co][0]
-##                                        y1=caseadj[co][1]
-                ##            print("y1= ",y1,"  x1=",x1)
-                                x=x1
-                                y=y1
-                                if (map[y][x]!=terr):
-                                      map[y][x]=terr
-                                      ct=ct+1
-##                                caseadj.clear()
-##                print(ct)
-##                n=len(poss)*2
+    taillemap=hauteur*longueur
+    for i in range (0,longueur):
+        u=random.randint(1,longueur)
+        u=int(taillemap/u)
+        taille=random.randint(1,u)
+        x=random.randint(0,longueur-1)
+        y=random.randint(0,hauteur-1)
+        terr=terre
+        map[y][x]=terr
+        for b in range (1,taille):
+            caseadj=caseadjacente(map,x,y)
+            co=random.randint(0,len(caseadj)-1)
+            x1=caseadj[co][0]
+            y1=caseadj[co][1]
+##            print("y1= ",y1,"  x1=",x1)
+            map[y1][x1]=terr
+            x=x1
+            y=y1
+            caseadj.clear()
+        n=len(poss)*2
 ##        adj,diag=adjacence(map,x,y)
     print("Duree de generation des terres emergees : %s secondes ---" % (time.time() - crea_time))
     return map
 
-def creationeige(ratio):
+def creationeige():
     crea_time=time.time()
     taille=0
-    nord=int((hauteur/10)*0.5)
-    sud=int((hauteur/10)*9.5)
+    taillemap=hauteur*longueur
+    nord=hauteur/10
+    sud=(hauteur/10)*9
     terr=neige
     for j in range (0,hauteur):
         for i in range (0,longueur):
             if map[j][i]==terre:
-                if (j<nord or j>sud):
-                    taille=random.randint(0,20)
+                if j<nord or j>sud:
+                    taille=random.randint(0,nord)
                     x=i
                     y=j
                     for b in range (0,taille):
@@ -215,34 +161,33 @@ def creationeige(ratio):
                         x1=caseadj[co][0]
                         y1=caseadj[co][1]
                         while (map[y1][x1]!=terre and c<5):
-                                co=random.randint(0,len(caseadj)-1)
-                                x1=caseadj[co][0]
-                                y1=caseadj[co][1]
-                                c=c+1
+                            co=random.randint(0,len(caseadj)-1)
+                            c=c+1
                         map[y1][x1]=terr
                         x=x1
                         y=y1
     print("Duree de generation des neiges : %s secondes ---" % (time.time() - crea_time))
     return map
 
-def creationdesert(ratio):
+def creationdesert():
     crea_time=time.time()
-    nord=(hauteur/10)*4.5
-    sud=(hauteur/10)*5.5
+    taillemap=hauteur*longueur
+    nord=(hauteur/10)*4
+    sud=(hauteur/10)*6
     hns=sud-nord
     terr=desert
     for j in range (0,hauteur):
         for i in range (0,longueur):
             if map[j][i]==terre:
                 if j>nord and j<sud:
-##                    ran=[]
-##                    multi=random.randint(1,20)
-##                    ran.append(desert)
-##                    for b in range (0,multi):
-##                        ran.append(0)
-##                    ch=random.randint(0,len(ran)-1)
-##                    if ran[ch]==desert :
-                        taille=random.randint(0,20)
+                    ran=[]
+                    multi=random.randint(1,10)
+                    ran.append(desert)
+                    for b in range (0,multi):
+                        ran.append(0)
+                    ch=random.randint(0,len(ran)-1)
+                    if ran[ch]==desert :
+                        taille=random.randint(0,int(longueur/10))
                         x=i
                         y=j
                         for b in range (0,int(taille)):
@@ -253,8 +198,6 @@ def creationdesert(ratio):
                             y1=caseadj[co][1]
                             while (map[y1][x1]!=terre and c<5):
                                 co=random.randint(0,len(caseadj)-1)
-                                x1=caseadj[co][0]
-                                y1=caseadj[co][1]
                                 c=c+1
                             map[y1][x1]=terr
                             x=x1
@@ -262,113 +205,107 @@ def creationdesert(ratio):
     print("Duree de generation des deserts : %s secondes ---" % (time.time() - crea_time))
     return map
 
-def creationplaine(ratio):
+def creationplaine():
         crea_time=time.time()
         #ligne_time=time.time()
+        taille=0
+        taillemap=hauteur*longueur
         for j in range (0,hauteur):
-              for i in range (0,longueur):
+                for i in range (0,longueur):
                         if map[j][i]==terre:
                                 map[j][i]=pln
         print("Duree de generation des plaines : %s secondes ---" % (time.time() - crea_time))
         return map
 
 
-def creationcolline(ratio):
+def creationcolline():
     crea_time=time.time()
     #ligne_time=time.time()
     taille=0
-    ct=0
-    print(ratio[8])
-    taillemap=ratio[0]
-    for i in range (0,int(ratio[10])):
-        if (ct<ratio[8]):
-                x=random.randint(0,longueur-1)
-                y=random.randint(0,hauteur-1)
-                while (map[y][x] not in [neige,pln,desert]):
-                    x=random.randint(0,longueur-1)
-                    y=random.randint(0,hauteur-1)
-                terr=col
-                map[y][x]=terr
-                ct=ct+1
-                tailleC=random.randint(1,ratio[10])
-                for b in range (1,int(tailleC)):
-                        c=0
-                        caseadj=caseadjacente(map,x,y)
+    taillemap=hauteur*longueur
+    for i in range (0,int(longueur/2)):
+        u=random.randint(int(longueur/2),longueur)
+        u=int(taillemap/u)
+        taille=random.randint(1,u)
+        x=random.randint(0,longueur-1)
+        y=random.randint(0,hauteur-1)
+        while (map[y][x] not in [neige,pln,desert]):
+            x=random.randint(0,longueur-1)
+            y=random.randint(0,hauteur-1)
+        terr=col
+        map[y][x]=terr
+        for b in range (1,taille):
+                c=0
+                caseadj=caseadjacente(map,x,y)
+                co=random.randint(0,len(caseadj)-1)
+                x1=caseadj[co][0]
+                y1=caseadj[co][1]
+                while (map[y1][x1]not in [neige,pln,desert] and c<5):
                         co=random.randint(0,len(caseadj)-1)
-                        x1=caseadj[co][0]
-                        y1=caseadj[co][1]
-                        while (map[y1][x1]not in [neige,pln,desert] and c<5):
-                                x1=caseadj[co][0]
-                                y1=caseadj[co][1]
-                                co=random.randint(0,len(caseadj)-1)
-                                c=c+1
-        ##            print("y1= ",y1,"  x1=",x1)
-                        map[y1][x1]=terr
-                        x=x1
-                        y=y1
-                        ct=ct+1
-                        caseadj.clear()
+                        c=c+1
+##            print("y1= ",y1,"  x1=",x1)
+                map[y1][x1]=terr
+                x=x1
+                y=y1
+                caseadj.clear()
         n=len(poss)*2
 ##        adj,diag=adjacence(map,x,y)
     print("Duree de generation des collines : %s secondes ---" % (time.time() - crea_time))
     return map   
 
-def creationmontagne(ratio):
-        crea_time=time.time()
-        #ligne_time=time.time()
-        taille=0
-        ctt=0
-        ct=0
-        c=0
-        x1=0
-        y1=0
-        for i in range (0,int(ratio[12])):
-                if (ct<ratio[10]):
-                        x=random.randint(0,longueur-1)
-                        y=random.randint(0,hauteur-1)
-                        while (map[y][x]!=col):
-                            x=random.randint(0,longueur-1)
-                            y=random.randint(0,hauteur-1)
-                        terr=mont
-                        map[y][x]=terr
-                        ctt=ctt+1
-                ##        print("taille=",taille)
-                        tailleC=random.randint(1,ratio[10])                 
-                        for b in range (1,tailleC):
-                            ct=3
-                            c=0
-                            caseadj=caseadjacente(map,x,y)
-                            casediag=casediagonale(map,x,y)
-                            while ct>2 and c<6:
-                ##                print("c=",c)
-                                ct=0
-                                c=c+1
-                                co=random.randint(0,len(caseadj)-1)
-                                x1=caseadj[co][0]
-                                y1=caseadj[co][1]
-                                caseadj1=caseadjacente(map,x1,y1)
-                                for i in range (0,len(caseadj1)):
-                ##                    print("i=",i)
-                                    x2=caseadj1[i][0]
-                                    y2=caseadj1[i][1]
-                                    if (map[y2][x2]==mont):
-                                        ct=ct+1
-                ##                        print(ct)
-                            co=random.randint(0,len(caseadj)-1)
-                            x1=caseadj[co][0]
-                            y1=caseadj[co][1]
-                            map[y1][x1]=terr
-                            ctt=ctt+1
-                            x=x1
-                            y=y1
-                            caseadj.clear()
+def creationmontagne():
+    crea_time=time.time()
+    #ligne_time=time.time()
+    taille=0
+    ct=0
+    c=0
+    x1=0
+    y1=0
+    for i in range (0,int(longueur/4)):
+        u=random.randint(1,int(longueur/4))
+        taille=random.randint(1,u)
+        x=random.randint(0,longueur-1)
+        y=random.randint(0,hauteur-1)
+        while (map[y][x]!=col):
+            x=random.randint(0,longueur-1)
+            y=random.randint(0,hauteur-1)
+        terr=mont
+        map[y][x]=terr
+##        print("taille=",taille)
+        for b in range (1,taille):
+            ct=3
+            c=0
+            caseadj=caseadjacente(map,x,y)
+            casediag=casediagonale(map,x,y)
+            while ct>2 and c<6:
+##                print("c=",c)
+                ct=0
+                c=c+1
+                co=random.randint(0,len(caseadj)-1)
+                x1=caseadj[co][0]
+                y1=caseadj[co][1]
+                caseadj1=caseadjacente(map,x1,y1)
+                for i in range (0,len(caseadj1)):
+##                    print("i=",i)
+                    x2=caseadj1[i][0]
+                    y2=caseadj1[i][1]
+                    if (map[y2][x2]==mont):
+                        ct=ct+1
+##                        print(ct)
+            co=random.randint(0,len(caseadj)-1)
+            x1=caseadj[co][0]
+            y1=caseadj[co][1]
+            map[y1][x1]=terr
+            x=x1
+            y=y1
+            caseadj.clear()
         n=len(poss)*2
 ##        adj,diag=adjacence(map,x,y)
-        print("Duree de generation des montagnes : %s secondes ---" % (time.time() - crea_time))
-        return map   
+    print("Duree de generation des montagnes : %s secondes ---" % (time.time() - crea_time))
+    return map   
 
 
-def creationmer(ratio):
+def creationmer():
         crea_time=time.time()
         for j in range (0,hauteur):
                 for i in range (0,longueur):
@@ -391,7 +328,7 @@ def creationmer(ratio):
         print("Duree de generation des mers : %s secondes ---" % (time.time() - crea_time))
         return map
 
-def lissage(ratio):
+def lissage():
     crea_time=time.time()
     for j in range(0,hauteur):
         for i in range(0,longueur):
@@ -439,7 +376,7 @@ def ressourcemap():
         for i in range (0,hauteur):
                 for j in range (0,longueur):
                     ran=[]
-                    multi=random.randint(2,5)
+                    multi=random.randint(1,3)
                     for b in range (0,multi):
                         ran.append(ress_rie)
                     if (map[i][j]==ocn or map[i][j]==mer):
@@ -453,13 +390,8 @@ def ressourcemap():
                         ctp=ctp+1
                     mapr[i][j]=ran[v]
         print("Duree de generation de la map des ressources : %s secondes ---" % (time.time() - ress_time))
-        if cto==0:
-                r=0
-        else :
-                r=ctp/cto
-        r=r*100
-        r=round(r,2)
-        print ("ratio poisson =",r,"%")
+        r=ctp/cto
+        print ("ratio ressource =",r)
         return mapr
 
 
@@ -494,45 +426,29 @@ def adjacence(map,i,j):
     return adj,diag
 
 
-def caseadjacente(map,i,j):             #i=longueur et j=hauteur terre sous forme de tube donc possibilite de passer d un coté a l autre
-        caseadj=[]
-        if (j>0):
-                caseadj.append([i,j-1])
-##        else :
-##                caseadj.append([i,hauteur-1])
-        if (i>0):
-                caseadj.append([i-1,j])
-        else :
-                caseadj.append([longueur-1,j])
-        if (j<hauteur-1):
-                caseadj.append([i,j+1])
-##        else :
-##                caseadj.append([i,0])
-        if (i<longueur-1):
-                caseadj.append([i+1,j])
-        else :
-                caseadj.append([0,j])
-        return caseadj
+def caseadjacente(map,i,j):
+    caseadj=[]
+    if (j>0):
+        caseadj.append([i,j-1])
+    if (i>0):
+        caseadj.append([i-1,j])
+    if (j<hauteur-1):
+        caseadj.append([i,j+1])
+    if (i<longueur-1):
+        caseadj.append([i+1,j])
+    return caseadj
 
-def casediagonale(map,i,j):             #i=longueur et j=hauteur
-        casediag=[]
-        if (j>0 and i>0):
-                casediag.append([i-1,j-1])
-        elif (j>0) :
-                casediag.append([longueur-1,j-1])
-        if (i>0 and j<hauteur-1):
-                casediag.append([i-1,j+1])
-        elif (j<hauteur-1) :
-                casediag.append([longueur-1,j+1])
-        if (j<hauteur-1 and i<longueur-1):
-                casediag.append([i+1,j+1])
-        elif (j<hauteur-1) :
-                casediag.append([0,j+1])
-        if (i<longueur-1 and j>0):
-                casediag.append([i+1,j-1])
-        elif (j>0) :
-                casediag.append([0,j-1])
-        return casediag
+def casediagonale(map,i,j):
+    casediag=[]
+    if (j>0 and i>0):
+        casediag.append([i-1,j-1])
+    if (i>0 and j<hauteur-1):
+        casediag.append([i-1,j+1])
+    if (j<hauteur-1 and i<longueur-1):
+        casediag.append([i+1,j+1])
+    if (i<longueur-1 and j>0):
+        casediag.append([i+1,j-1])
+    return casediag
 
 def recherche(L,x):
     for i in range(0,len(L)):
@@ -541,18 +457,16 @@ def recherche(L,x):
     return False
 
 def creationmap(map,mapr):
-        ratio=creationratio()
-        map=creationterre(ratio)
-        map=creationeige(ratio)
-        map=creationdesert(ratio)
-        map=creationplaine(ratio)
-        map=creationcolline(ratio)
-##        map=creationmontagne(ratio)
-        map=creationmer(ratio)
-        map=lissage(ratio)
-        mapr=ressourcemap()
-        print(ratio)
-        return map,mapr
+    map=creationterre()
+    map=creationeige()
+    map=creationdesert()
+    map=creationplaine()
+    map=creationcolline()
+    map=creationmontagne()
+    map=creationmer()
+    map=lissage()
+    mapr=ressourcemap()
+    return map,mapr
     
 
 
@@ -731,7 +645,6 @@ elif(includName == "Manual"):
 	html=yesno("Export Html? o/n")
 	if (html=='o' or html=='oui'):
 		nomhtml=quest("Nom du fichier de l export (.html)")
-		nomhtml=nomhtml+".html"
 else:
 		includeProfile(includName)
 

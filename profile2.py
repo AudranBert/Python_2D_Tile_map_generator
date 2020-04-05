@@ -1,5 +1,5 @@
-longueur=5
-hauteur=5
+longueur=10
+hauteur=10
 aff="oui"
 html="oui"
 fic="rien"
