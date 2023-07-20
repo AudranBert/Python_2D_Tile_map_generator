@@ -1,0 +1,8 @@
+longueur: 1000
+hauteur: 800
+print_map: False
+mode: generate
+file_map: None
+export_format: html
+export_file: export.html
+

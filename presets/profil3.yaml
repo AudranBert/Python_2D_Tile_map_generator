@@ -1,0 +1,8 @@
+longueur: 2000
+hauteur: 1600
+print_map: False
+mode: generate
+file_map: None
+export_format: img
+export_file: export.png
+
