@@ -18,6 +18,9 @@ class MapGeneratorHeightmap(MapGenerator):
         self.heightmap = self.generate_heightmap()
 
     def generate_heightmap(self):
+        # set a random seed for noise
+
+
         heightmap = []
         octaves = 8
         freq = 32 * octaves
@@ -25,6 +28,7 @@ class MapGeneratorHeightmap(MapGenerator):
             heightmap.append([])
             for j in range(0, self.longueur):
                 heightmap[-1].append(noise.snoise2(j/freq, i/freq, octaves=octaves))
+        
         # import matplotlib.pyplot as plt
         # plt.imshow(heightmap)
         # plt.show()
