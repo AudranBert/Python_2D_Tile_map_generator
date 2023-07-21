@@ -1,8 +1,8 @@
 import time
 import random
 import noise
-from parameters import *
-from map_generator import MapGenerator
+from ..parameters import *
+from .map_generator import MapGenerator
 
 
 class MapGeneratorHeightmap(MapGenerator):

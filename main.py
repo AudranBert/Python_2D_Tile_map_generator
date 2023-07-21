@@ -2,16 +2,16 @@ import yaml
 import time
 import os
 import glob
-from profil_loader import *
-from parameters import *
-from export import *
-from utils import *
-from map_object import MapObject
-from map_generator import MapGenerator
-from map_generator_heightmap import MapGeneratorHeightmap
+from src.profil_loader import *
+from src.parameters import *
+from src.export import *
+from src.utils import *
+from src.map_object import MapObject
+from src.generators.map_generator import MapGenerator
+from src.generators.map_generator_heightmap import MapGeneratorHeightmap
 
 def main():
-    print("\tProgramme de generation de map aleatoire par Audran")
+    print("\tMap generation is starting...")
     start_time = time.time()
     os.makedirs("output", exist_ok=True)
     profileList = glob.glob('presets/profil*.yaml')
@@ -21,7 +21,11 @@ def main():
     
     for i in range(len(profileList)):
         print(i + 1, " : ", profileList[i])
-    includName = profileList[int(input("profile number : ")) - 1]
+    profil_number = int(input("Profil number : "))
+    if profil_number > len(profileList):
+        print("Profil unvalid")
+        exit()
+    includName = profileList[profil_number - 1]
 
     params = {}
 
@@ -56,8 +60,8 @@ def main():
         export_img(map_object, params['export_file'])
     elif (params['export_format'] in ["html", "html"]):
         export_html(map_object, params['export_file'])
-    print("Temps total d execution : %s secondes ---" % (time.time() - start_time))
-    print("\tGeneration termine !")
+    print(f"Map exported in {params['export_file']}")
+    print(f"\tMap generation is finished (in {(time.time() - start_time):.2f}s)")
 
 if __name__ == "__main__":
     main()

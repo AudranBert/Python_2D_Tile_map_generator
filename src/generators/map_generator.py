@@ -1,6 +1,6 @@
 import time
 import random
-from parameters import *
+from src.parameters import *
 
 
 class MapGenerator():

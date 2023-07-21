@@ -1,7 +1,7 @@
-from parameters import *
+from src.parameters import *
 import time
 import os
-from map_object import MapObject
+from src.map_object import MapObject
 
 def export_html(map_object, filename):
     export_time = time.time()
@@ -36,7 +36,7 @@ def export_html(map_object, filename):
                 # print("Temps d execution : %s secondes ---" % (time.time() - ligne_time))
                 # ligne_time=time.time()
         fichier.write("		</table>\n" + "	</body>\n" + "</html>")
-    print("Duree l'export HTML : %s secondes ---" % (time.time() - export_time))
+    print(f"HTML export took: {(time.time() - export_time):.2f}s")
 
 def export_img(map_object, filename):
     if filename.endswith(".png") or filename.endswith(".jpg"):
@@ -52,7 +52,7 @@ def export_img(map_object, filename):
         for j in range(0, map_object.longueur):
             draw.point((j, i), fill=BiomeColors[map_object.map[i][j]])
     img.save(os.path.join("output",filename))
-    print("Duree l'export image : %s secondes ---" % (time.time() - export_time))
+    print(f"Image export took : {(time.time() - export_time):.2f}s")
 
 # ouverture html :
 def Open_html(nomhtml):

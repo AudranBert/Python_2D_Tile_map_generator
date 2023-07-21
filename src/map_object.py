@@ -1,6 +1,6 @@
 import time
 import random
-from parameters import *
+from src.parameters import *
 
 class MapObject():
 
@@ -122,31 +122,31 @@ class MapObject():
         self.map = self.initmap()
         t = time.time()
         self.map = self.map_generator.generate_lands()
-        print(f"Duree de generation des terres : {time.time() - t:.2f} secondes")
+        print(f"Land generation took : {time.time() - t:.2f}s")
         t = time.time()
         self.map = self.map_generator.generate_snows()
-        print(f"Duree de generation des neiges : {time.time() - t:.2f} secondes")
+        print(f"Snows generation took : {time.time() - t:.2f}s")
         t = time.time()
         self.map = self.map_generator.generate_deserts()
-        print(f"Duree de generation des deserts : {time.time() - t:.2f} secondes")
+        print(f"Deserts generation took : {time.time() - t:.2f}s")
         t = time.time()
         self.map = self.map_generator.generate_plains()
-        print(f"Duree de generation des plaines : {time.time() - t:.2f} secondes")
+        print(f"Plains generation took : {time.time() - t:.2f}s")
         t = time.time()
         self.map = self.map_generator.generate_hills()
-        print(f"Duree de generation des collines : {time.time() - t:.2f} secondes")
+        print(f"Hills generation took : {time.time() - t:.2f}s")
         t = time.time()
         self.map = self.map_generator.generate_mountains()
-        print(f"Duree de generation des montagnes : {time.time() - t:.2f} secondes")
+        print(f"Mountains generation took : {time.time() - t:.2f}s")
         t = time.time()
         self.map = self.map_generator.generate_seas()
-        print(f"Duree de generation des mers : {time.time() - t:.2f} secondes")
+        print(f"Seas generation took : {time.time() - t:.2f}s")
         t = time.time()
         self.map = self.map_generator.flatten()
-        print(f"Duree du lissage : {time.time() - t:.2f} secondes")
+        print(f"Smoothing of the map took : {time.time() - t:.2f}s")
         t = time.time()
         if self.generate_resources:
             self.mapr = self.map_generator.generate_resources_map()
-            print(f"Duree de generation des ressources : {time.time() - t:.2f} secondes")
+            print(f"Resources generation took : {time.time() - t:.2f}s")
         return self.map, self.mapr
     

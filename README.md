@@ -4,6 +4,5 @@ This project allows to generate map with tiles. The maps can be exported to hmtl
 
 ## TO DO
 
-- refactor files
-- add height map
 - custom sea level
+- random heightmap

@@ -1,5 +1,5 @@
 import yaml
-from questions import *
+from .questions import *
 
 def load_profil(profil_file):
     # load profile.yaml
