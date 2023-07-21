@@ -33,7 +33,7 @@ def main():
     longueur = params["longueur"]
     hauteur = params["hauteur"]
 
-    map_object = MapObject(longueur, hauteur)
+    map_object = MapObject(longueur, hauteur, params.get('generate_resources',True))
     if (params['mode'] in ["generate", "write"]):
         map_object.creationmap()
         if (params['mode'] == 'write'):

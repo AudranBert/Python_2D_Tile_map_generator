@@ -2,6 +2,7 @@ longueur: 300
 hauteur: 200
 print_map: False
 mode: generate
+generate_resources: False
 file_map: None
 export_format: img
 export_file: export.png

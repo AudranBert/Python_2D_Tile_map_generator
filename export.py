@@ -24,8 +24,11 @@ def export_html(map_object, filename):
             ligne = ligne + 1
             fichier.write("			<tr>\n")
             for j in range(0, map_object.longueur):
-                fichier.write('<td class="d' + str(map_object.map[i][j]) + '">' + "<pre class=R" + str(map_object.mapr[i][j]) + " > " + str(
-                    map_object.mapr[i][j]) + " </pre>" + "</td>\n")
+                if map_object.generate_resources:
+                    fichier.write('<td class="d' + str(map_object.map[i][j]) + '">' + "<pre class=R" + str(map_object.mapr[i][j]) + " > " + str(
+                        map_object.mapr[i][j]) + " </pre>" + "</td>\n")
+                else:
+                    fichier.write('<td class="d' + str(map_object.map[i][j]) + '">' + "</td>\n")
             fichier.write("			</tr>\n")
             modul = ligne % 50
             if modul == 0:

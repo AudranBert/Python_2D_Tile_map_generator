@@ -3,14 +3,12 @@ import random
 from parameters import *
 
 class MapObject():
-    hauteur = 0
-    longueur = 0
-    map = []
-    mapr = []
 
-    def __init__(self, longueur, hauteur):
+    def __init__(self, longueur, hauteur, generate_resources=True):
         self.longueur = longueur
         self.hauteur = hauteur
+        self.use_heightmap = True
+        self.generate_resources = generate_resources
         self.map = []
         self.mapr = []
     
@@ -22,8 +20,29 @@ class MapObject():
                 self.map[i].append(1)
         return self.map
     
-    def creationratio(self):
-        ratio = []
+    def get_surface(self):
+        return self.longueur * self.hauteur
+
+    def get_land_ratio(self):
+        total = self.longueur * self.hauteur
+        land = 0
+        for i in range(0, self.hauteur):
+            for j in range(0, self.longueur):
+                if self.map[i][j] != ocn and self.map[i][j] != mer:
+                    land += 1
+        return land/total
+
+    def get_hills_qtt(self):
+        hills = 0
+        for i in range(0, self.hauteur):
+            for j in range(0, self.longueur):
+                if self.map[i][j] == col:
+                    hills += 1
+        return hills    
+
+
+    def get_ratios(self):
+        ratio = dict()
         surface = self.hauteur * self.longueur
         print(surface)
         if surface <= 200:
@@ -42,17 +61,41 @@ class MapObject():
             nbcont = int(surface / 500)
             taillecont = int(surface / 250)
             surfaceterre = int(surface / 4)
-        ratio.append(surface)
-        ratio.append(nbcont)
-        ratio.append(surfaceterre)
-        ratio.append(taillecont)
+        ratio['surface'] = surface
+        ratio['nbcont'] = nbcont
+        ratio['taillecont'] = taillecont
+        ratio['surfaceterre'] = surfaceterre
+
+    def creationratio(self):
+        ratio = dict()
+        surface = self.hauteur * self.longueur
+        print(surface)
+        if surface <= 200:
+            nbcont = random.randint(1, 6)
+            taillecont = int(surface / 10)
+            surfaceterre = int(surface / 4)
+        elif surface > 200 and surface <= 2500:
+            nbcont = random.randint(3, int(surface / 50))
+            taillecont = int(surface / 20)
+            surfaceterre = int(surface / 4)
+        elif surface > 2500 and surface <= 25000:
+            nbcont = int(surface / 25)
+            taillecont = int(surface / 5)
+            surfaceterre = int(surface / 2.5)
+        else:
+            nbcont = int(surface / 500)
+            taillecont = int(surface / 250)
+            surfaceterre = int(surface / 4)
+        ratio['surface'] = surface
+        ratio['nbcont'] = nbcont
+        ratio['taillecont'] = taillecont
+        ratio['surfaceterre'] = surfaceterre
         d2 = [1, 0.75, 0.66, 0.5, 0.33, 0.25, 0.15]
         d = [0.5, 0.4, 0.33, 0.25, 0.20, 0.15, 0.10, 0.05, 0.02]
         for i in range(0, len(d)):
             ##            ratio.append(int(longueur*d[i]))
             ##            ratio.append(int(hauteur*d[i]))
             ratio.append(int(ratio[2] * d[i]))
-        print(ratio[2])
         return ratio
 
 
@@ -63,13 +106,11 @@ class MapObject():
         return var
 
 
-    def creationterre(self, ratio):
+    def creationterre(self):
         crea_time = time.time()
-        # ligne_time=time.time()
-        taille = 0
         ct = 0
-        taillemap = ratio[0]
-        for i in range(0, ratio[1]):  # defini le nb de continent
+        ratio = self.get_ratios()
+        for i in range(0, ratio['nbccont']):  # defini le nb de continent
             if (ct < ratio[2]):
                 c = 0
                 x = random.randint(0, self.longueur - 1)
@@ -82,34 +123,24 @@ class MapObject():
                 if (self.map[y][x] != terr):
                     self.map[y][x] = terr
                     ct = ct + 1
-                tailleC = random.randint(1, ratio[3])
+                tailleC = random.randint(1, ratio['surfaceterre'])
                 for b in range(1, int(tailleC)):  # defini la taille des continents
-                    if (ct < ratio[2]):
+                    if (ct < ratio['taillecont']):
                         ##                                c=0
                         caseadj = self.caseadjacente(x, y)
                         co = random.randint(0, len(caseadj) - 1)
                         x1 = caseadj[co][0]
                         y1 = caseadj[co][1]
-                        ##                                while (map[y1][x1]!=ocn and c<=4):
-                        ##                                        co=random.randint(0,len(caseadj)-1)
-                        ##                                        c=c+1
-                        ##                                        x1=caseadj[co][0]
-                        ##                                        y1=caseadj[co][1]
-                        ##            print("y1= ",y1,"  x1=",x1)
                         x = x1
                         y = y1
                         if (self.map[y][x] != terr):
                             self.map[y][x] = terr
                             ct = ct + 1
-        ##                                caseadj.clear()
-        ##                print(ct)
-        ##                n=len(poss)*2
-        ##        adj,diag=adjacence(map,x,y)
         print("Duree de generation des terres emergees : %s secondes ---" % (time.time() - crea_time))
         return self.map
 
 
-    def creationeige(self, ratio):
+    def creationeige(self):
         crea_time = time.time()
         taille = 0
         nord = int((self.hauteur / 10) * 0.5)
@@ -140,7 +171,7 @@ class MapObject():
         return self.map
 
 
-    def creationdesert(self, ratio):
+    def creationdesert(self):
         crea_time = time.time()
         nord = (self.hauteur / 10) * 4.5
         sud = (self.hauteur / 10) * 5.5
@@ -150,13 +181,6 @@ class MapObject():
             for i in range(0, self.longueur):
                 if self.map[j][i] == terre:
                     if j > nord and j < sud:
-                        ##                    ran=[]
-                        ##                    multi=random.randint(1,20)
-                        ##                    ran.append(desert)
-                        ##                    for b in range (0,multi):
-                        ##                        ran.append(0)
-                        ##                    ch=random.randint(0,len(ran)-1)
-                        ##                    if ran[ch]==desert :
                         taille = random.randint(0, 20)
                         x = i
                         y = j
@@ -178,7 +202,7 @@ class MapObject():
         return self.map
 
 
-    def creationplaine(self, ratio):
+    def creationplaine(self):
         crea_time = time.time()
         # ligne_time=time.time()
         for j in range(0, self.hauteur):
@@ -189,15 +213,14 @@ class MapObject():
         return self.map
 
 
-    def creationcolline(self, ratio):
+    def creationcolline(self):
         crea_time = time.time()
-        # ligne_time=time.time()
-        taille = 0
         ct = 0
-        print(ratio[8])
-        taillemap = ratio[0]
-        for i in range(0, int(ratio[10])):
-            if (ct < ratio[8]):
+        number_of_hills = random.randint(1, int(self.get_land_ratio() * self.get_surface() * 0.3))
+        number_of_tries = int(number_of_hills * 0.5)
+        max_number_of_hills_per_group =int(min(250, number_of_hills*0.2))
+        for i in range(0, number_of_tries):
+            if (ct < number_of_hills):
                 x = random.randint(0, self.longueur - 1)
                 y = random.randint(0, self.hauteur - 1)
                 while (self.map[y][x] not in [neige, pln, desert]):
@@ -206,7 +229,7 @@ class MapObject():
                 terr = col
                 self.map[y][x] = terr
                 ct = ct + 1
-                tailleC = random.randint(1, ratio[10])
+                tailleC = random.randint(1, max_number_of_hills_per_group)
                 for b in range(1, int(tailleC)):
                     c = 0
                     caseadj = self.caseadjacente(x, y)
@@ -230,7 +253,7 @@ class MapObject():
         return self.map
 
 
-    def creationmontagne(self, ratio):
+    def creationmontagne(self):
         crea_time = time.time()
         # ligne_time=time.time()
         taille = 0
@@ -239,8 +262,11 @@ class MapObject():
         c = 0
         x1 = 0
         y1 = 0
-        for i in range(0, int(ratio[12])):
-            if (ct < ratio[10]):
+        number_of_mountains = random.randint(1, int(self.get_hills_qtt()*0.5))
+        number_of_tries = int(number_of_mountains * 0.5)
+        max_number_of_mountains_per_group =int(min(100, number_of_mountains*0.2))
+        for i in range(0, number_of_tries):
+            if (ct <number_of_mountains):
                 x = random.randint(0, self.longueur - 1)
                 y = random.randint(0, self.hauteur - 1)
                 while (self.map[y][x] != col):
@@ -250,12 +276,12 @@ class MapObject():
                 self.map[y][x] = terr
                 ctt = ctt + 1
                 ##        print("taille=",taille)
-                tailleC = random.randint(1, ratio[10])
+                tailleC = random.randint(1, max_number_of_mountains_per_group)
                 for b in range(1, tailleC):
                     ct = 3
                     c = 0
-                    caseadj = self.caseadjacente(self.map, x, y)
-                    casediag = self.casediagonale(self.map, x, y)
+                    caseadj = self.caseadjacente(x, y)
+                    casediag = self.casediagonale(x, y)
                     while ct > 2 and c < 6:
                         ##                print("c=",c)
                         ct = 0
@@ -263,7 +289,7 @@ class MapObject():
                         co = random.randint(0, len(caseadj) - 1)
                         x1 = caseadj[co][0]
                         y1 = caseadj[co][1]
-                        caseadj1 = self.caseadjacente(self.map, x1, y1)
+                        caseadj1 = self.caseadjacente(x1, y1)
                         for i in range(0, len(caseadj1)):
                             ##                    print("i=",i)
                             x2 = caseadj1[i][0]
@@ -285,7 +311,7 @@ class MapObject():
         return self.map
 
 
-    def creationmer(self, ratio):
+    def creationmer(self):
         crea_time = time.time()
         for j in range(0, self.hauteur):
             for i in range(0, self.longueur):
@@ -309,7 +335,7 @@ class MapObject():
         return self.map
 
 
-    def lissage(self, ratio):
+    def lissage(self):
         crea_time = time.time()
         for j in range(0, self.hauteur):
             for i in range(0, self.longueur):
@@ -461,17 +487,49 @@ class MapObject():
                 return True
         return False
 
+    def generate_heightmap(self):
+        import noise
+        heightmap = []
+        octaves = 8
+        freq = 32 * octaves
+        for i in range(0, self.hauteur):
+            heightmap.append([])
+            for j in range(0, self.longueur):
+                heightmap[-1].append(noise.snoise2(j/freq, i/freq, octaves=octaves))
+        # plot the result
+        
+        # import matplotlib.pyplot as plt
+        # plt.imshow(heightmap)
+        # plt.show()
+        return heightmap
+
+
+    def generate_land_from_heightmap(self, heightmap):
+        sea_level = 0.05
+        for i in range(0, self.hauteur):
+            for j in range(0, self.longueur):
+                if heightmap[i][j] > sea_level:
+                    self.map[i][j] = terre
+                else:
+                    self.map[i][j] = ocn
+        return self.map
+
     def creationmap(self):
+        
         self.map = self.initmap()
-        ratio = self.creationratio()
-        self.map = self.creationterre(ratio)
-        self.map = self.creationeige(ratio)
-        self.map = self.creationdesert(ratio)
-        self.map = self.creationplaine(ratio)
-        self.map = self.creationcolline(ratio)
-        ##        map=creationmontagne(ratio)
-        self.map = self.creationmer(ratio)
-        self.map = self.lissage(ratio)
-        self.mapr = self.ressourcemap()
-        print(ratio)
+        if self.use_heightmap:
+            heightmap= self.generate_heightmap()
+            self.map = self.generate_land_from_heightmap(heightmap)
+        else:
+            self.map = self.creationterre()
+        self.map = self.creationeige()
+        self.map = self.creationdesert()
+        self.map = self.creationplaine()
+        self.map = self.creationcolline()
+        self.map = self.creationmontagne()
+        self.map = self.creationmer()
+        self.map = self.lissage()
+        if self.generate_resources:
+            self.mapr = self.ressourcemap()
         return self.map, self.mapr
+    
