@@ -4,9 +4,10 @@ from parameters import *
 
 class MapObject():
 
-    def __init__(self, longueur, hauteur, generate_resources=True):
+    def __init__(self, longueur, hauteur, map_generator=None, generate_resources=True):
         self.longueur = longueur
         self.hauteur = hauteur
+        self.map_generator = map_generator
         self.use_heightmap = True
         self.generate_resources = generate_resources
         self.map = []
@@ -106,7 +107,7 @@ class MapObject():
         return var
 
 
-    def creationterre(self):
+    def generate_lands(self):
         crea_time = time.time()
         ct = 0
         ratio = self.get_ratios()
@@ -140,7 +141,7 @@ class MapObject():
         return self.map
 
 
-    def creationeige(self):
+    def generate_snows(self):
         crea_time = time.time()
         taille = 0
         nord = int((self.hauteur / 10) * 0.5)
@@ -171,7 +172,7 @@ class MapObject():
         return self.map
 
 
-    def creationdesert(self):
+    def generate_deserts(self):
         crea_time = time.time()
         nord = (self.hauteur / 10) * 4.5
         sud = (self.hauteur / 10) * 5.5
@@ -202,7 +203,7 @@ class MapObject():
         return self.map
 
 
-    def creationplaine(self):
+    def generate_plains(self):
         crea_time = time.time()
         # ligne_time=time.time()
         for j in range(0, self.hauteur):
@@ -213,7 +214,7 @@ class MapObject():
         return self.map
 
 
-    def creationcolline(self):
+    def generate_hills(self):
         crea_time = time.time()
         ct = 0
         number_of_hills = random.randint(1, int(self.get_land_ratio() * self.get_surface() * 0.3))
@@ -253,7 +254,7 @@ class MapObject():
         return self.map
 
 
-    def creationmontagne(self):
+    def generate_mountains(self):
         crea_time = time.time()
         # ligne_time=time.time()
         taille = 0
@@ -311,7 +312,7 @@ class MapObject():
         return self.map
 
 
-    def creationmer(self):
+    def generate_seas(self):
         crea_time = time.time()
         for j in range(0, self.hauteur):
             for i in range(0, self.longueur):
@@ -335,7 +336,7 @@ class MapObject():
         return self.map
 
 
-    def lissage(self):
+    def flatten(self):
         crea_time = time.time()
         for j in range(0, self.hauteur):
             for i in range(0, self.longueur):
@@ -372,7 +373,7 @@ class MapObject():
 
 
     # ressource map
-    def ressourcemap(self):
+    def generate_resources_map(self):
         ctp = 0
         cto = 0
         ress_time = time.time()
@@ -521,15 +522,15 @@ class MapObject():
             heightmap= self.generate_heightmap()
             self.map = self.generate_land_from_heightmap(heightmap)
         else:
-            self.map = self.creationterre()
-        self.map = self.creationeige()
-        self.map = self.creationdesert()
-        self.map = self.creationplaine()
-        self.map = self.creationcolline()
-        self.map = self.creationmontagne()
-        self.map = self.creationmer()
-        self.map = self.lissage()
+            self.map = self.generate_lands()
+        self.map = self.generate_snows()
+        self.map = self.generate_deserts()
+        self.map = self.generate_plains()
+        self.map = self.generate_hills()
+        self.map = self.generate_mountains()
+        self.map = self.generate_seas()
+        self.map = self.flatten()
         if self.generate_resources:
-            self.mapr = self.ressourcemap()
+            self.mapr = self.generate_resources_map()
         return self.map, self.mapr
     
