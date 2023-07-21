@@ -40,7 +40,6 @@ class MapGenerator():
         return ratio
 
     def generate_lands(self):
-        crea_time = time.time()
         ct = 0
         ratio = self.get_ratios()
         map_loc = self.map_object.map.copy()
@@ -70,12 +69,10 @@ class MapGenerator():
                         if (map_loc[y][x] != terr):
                             map_loc[y][x] = terr
                             ct = ct + 1
-        print("Duree de generation des terres emergees : %s secondes ---" % (time.time() - crea_time))
         return map_loc
 
 
     def generate_snows(self):
-        crea_time = time.time()
         taille = 0
         nord = int((self.hauteur / 10) * 0.5)
         sud = int((self.hauteur / 10) * 9.5)
@@ -102,12 +99,10 @@ class MapGenerator():
                             map_loc[y1][x1] = terr
                             x = x1
                             y = y1
-        print("Duree de generation des neiges : %s secondes ---" % (time.time() - crea_time))
         return map_loc
 
 
     def generate_deserts(self):
-        crea_time = time.time()
         nord = (self.hauteur / 10) * 4.5
         sud = (self.hauteur / 10) * 5.5
         hns = sud - nord
@@ -134,24 +129,19 @@ class MapGenerator():
                             map_loc[y1][x1] = terr
                             x = x1
                             y = y1
-        print("Duree de generation des deserts : %s secondes ---" % (time.time() - crea_time))
         return map_loc
 
 
     def generate_plains(self):
-        crea_time = time.time()
-        # ligne_time=time.time()
         map_loc = self.map_object.map.copy()
         for j in range(0, self.hauteur):
             for i in range(0, self.longueur):
                 if map_loc[j][i] == terre:
                     map_loc[j][i] = pln
-        print("Duree de generation des plaines : %s secondes ---" % (time.time() - crea_time))
         return map_loc
 
 
     def generate_hills(self):
-        crea_time = time.time()
         ct = 0
         map_loc = self.map_object.map.copy()
         number_of_hills = random.randint(1, int(self.map_object.get_land_ratio() * self.map_object.get_surface() * 0.3))
@@ -187,14 +177,10 @@ class MapGenerator():
                     caseadj.clear()
             n = len(poss) * 2
         ##        adj,diag=adjacence(map,x,y)
-        print("Duree de generation des collines : %s secondes ---" % (time.time() - crea_time))
         return map_loc
 
 
     def generate_mountains(self):
-        crea_time = time.time()
-        # ligne_time=time.time()
-        taille = 0
         ctt = 0
         ct = 0
         c = 0
@@ -245,13 +231,10 @@ class MapGenerator():
                     y = y1
                     caseadj.clear()
         n = len(poss) * 2
-        ##        adj,diag=adjacence(map,x,y)
-        print("Duree de generation des montagnes : %s secondes ---" % (time.time() - crea_time))
         return map_loc
 
 
     def generate_seas(self):
-        crea_time = time.time()
         map_loc = self.map_object.map.copy()
         for j in range(0, self.hauteur):
             for i in range(0, self.longueur):
@@ -271,12 +254,10 @@ class MapGenerator():
                             ##                                                print("y1=",y1,"x1=",x1)
                             if map_loc[y1][x1] in [pln, col, mont, neige, desert]:
                                 map_loc[j][i] = mer
-        print("Duree de generation des mers : %s secondes ---" % (time.time() - crea_time))
         return map_loc
 
 
     def flatten(self):
-        crea_time = time.time()
         map_loc = self.map_object.map.copy()
         for j in range(0, self.hauteur):
             for i in range(0, self.longueur):
@@ -308,7 +289,6 @@ class MapGenerator():
                         ran.append(marais)
                         rdn = random.randint(0, len(ran) - 1)
                         map_loc[j][i] = ran[rdn]
-        print("Duree du lissage : %s secondes ---" % (time.time() - crea_time))
         return map_loc
 
 
@@ -316,7 +296,6 @@ class MapGenerator():
     def generate_resources_map(self):
         ctp = 0
         cto = 0
-        ress_time = time.time()
         mapr_loc = self.map_object.mapr.copy()
         if mapr_loc is None:
             mapr_loc = []
@@ -341,7 +320,6 @@ class MapGenerator():
                 if (ran[v] == ress_poi):
                     ctp = ctp + 1
                 mapr_loc[i][j] = ran[v]
-        print("Duree de generation de la map des ressources : %s secondes ---" % (time.time() - ress_time))
         if cto == 0:
             r = 0
         else:

@@ -9,6 +9,7 @@ class MapObject():
         self.hauteur = hauteur
         self.map_generator = map_generator
         self.map_generator.init_generator(self)
+        print(f"Using '{self.map_generator.__class__.__name__}' as map generator")
         self.use_heightmap = True
         self.generate_resources = generate_resources
         self.map = []
@@ -119,15 +120,33 @@ class MapObject():
 
     def generate_map(self):
         self.map = self.initmap()
+        t = time.time()
         self.map = self.map_generator.generate_lands()
+        print(f"Duree de generation des terres : {time.time() - t:.2f} secondes")
+        t = time.time()
         self.map = self.map_generator.generate_snows()
+        print(f"Duree de generation des neiges : {time.time() - t:.2f} secondes")
+        t = time.time()
         self.map = self.map_generator.generate_deserts()
+        print(f"Duree de generation des deserts : {time.time() - t:.2f} secondes")
+        t = time.time()
         self.map = self.map_generator.generate_plains()
+        print(f"Duree de generation des plaines : {time.time() - t:.2f} secondes")
+        t = time.time()
         self.map = self.map_generator.generate_hills()
+        print(f"Duree de generation des collines : {time.time() - t:.2f} secondes")
+        t = time.time()
         self.map = self.map_generator.generate_mountains()
+        print(f"Duree de generation des montagnes : {time.time() - t:.2f} secondes")
+        t = time.time()
         self.map = self.map_generator.generate_seas()
+        print(f"Duree de generation des mers : {time.time() - t:.2f} secondes")
+        t = time.time()
         self.map = self.map_generator.flatten()
+        print(f"Duree du lissage : {time.time() - t:.2f} secondes")
+        t = time.time()
         if self.generate_resources:
             self.mapr = self.map_generator.generate_resources_map()
+            print(f"Duree de generation des ressources : {time.time() - t:.2f} secondes")
         return self.map, self.mapr
     
