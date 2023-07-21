@@ -7,6 +7,8 @@ from parameters import *
 from export import *
 from utils import *
 from map_object import MapObject
+from map_generator import MapGenerator
+from map_generator_heightmap import MapGeneratorHeightmap
 
 def main():
     print("\tProgramme de generation de map aleatoire par Audran")
@@ -32,10 +34,13 @@ def main():
 
     longueur = params["longueur"]
     hauteur = params["hauteur"]
-
-    map_object = MapObject(longueur, hauteur, params.get('generate_resources',True))
+    if (params.get('generator','') == "heightmap"):
+        generator = MapGeneratorHeightmap()
+    else:
+        generator = MapGenerator()
+    map_object = MapObject(longueur, hauteur, generator, params.get('generate_resources',True))
     if (params['mode'] in ["generate", "write"]):
-        map_object.creationmap()
+        map_object.generate_map()
         if (params['mode'] == 'write'):
             ecriremap(map_object, params['file_map'])
     elif (params['mode'] in ["read", "load"]):
