@@ -1,8 +1,9 @@
-length: 300
-height: 200
+length: 4000
+height: 3200
 print_map: False
 mode: generate
 generate_resources: False
+generator: heightmap
 file_map: None
 export_format: img
 export_file: export.png

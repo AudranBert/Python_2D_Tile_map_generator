@@ -36,17 +36,17 @@ def main():
     else:
         params = load_profil(includName)
 
-    longueur = params["longueur"]
-    hauteur = params["hauteur"]
+    length = params["length"]
+    height = params["height"]
     if (params.get('generator','') == "heightmap"):
         generator = MapGeneratorHeightmap()
     else:
         generator = MapGenerator()
-    map_object = MapObject(longueur, hauteur, generator, params.get('generate_resources',True))
+    map_object = MapObject(length, height, generator, params.get('generate_resources',True))
     if (params['mode'] in ["generate", "write"]):
         map_object.generate_map()
         if (params['mode'] == 'write'):
-            ecriremap(map_object, params['file_map'])
+            write_map(map_object, params['file_map'])
     elif (params['mode'] in ["read", "load"]):
         raise NotImplementedError
         # map_object = liremap(params['file_map'])
@@ -54,8 +54,8 @@ def main():
         print("Mode unvalid")
         exit()
     if params['print_map']:
-        affichagetm(map_object)
-        affichagetr(map_object)
+        print_map(map_object)
+        print_resources_map(map_object)
     if (params['export_format'] in ["img"," image"]):
         export_img(map_object, params['export_file'])
     elif (params['export_format'] in ["html", "html"]):

@@ -1,5 +1,5 @@
-longueur: 1000
-hauteur: 800
+length: 1000
+height: 800
 print_map: False
 mode: generate
 file_map: None

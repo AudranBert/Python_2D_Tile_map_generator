@@ -9,12 +9,15 @@ def load_profil(profil_file):
 
 def auto_profil():
     profil = {
-        "longueur": 20,
-        "hauteur": 10,
-        "aff": "non",
-        "html": "oui",
-        "fic": "rien",
-        "nomhtml": "export.html"
+        "length": 100,
+        "height": 80,
+        "print_map": False,
+        "mode": "generate",
+        "generate_resources": False,
+        "generator": "heightmap",
+        "file_map": None,
+        "export_format": "img",
+        "export_file": "export.png"
     }
     return profil
 
@@ -22,7 +25,7 @@ def auto_profil():
 
 
 # lire un fichier
-def lirecaracmap(nomfic):
+def read_map_in_file(nomfic):
     fichier = open(nomfic, "r")
     longueur = int(fichier.readline())
     hauteur = int(fichier.readline())
@@ -30,27 +33,35 @@ def lirecaracmap(nomfic):
     return longueur, hauteur
 
 def manual_profil():
-    V = ["e", "l", "r", "ecriture", "lecture", "rien"]
-    fic = quest_responses("Lecture,ecriture ou rien", V)
-    if (fic == 'e' or fic == 'ecriture'):
-        nomfic = quest("Nom du fichier de destination (.txt)")
-    if (fic == 'r' or fic == 'e' or fic == 'rien' or fic == 'ecrire' or fic == 'ecriture'):
-        longueur, hauteur = taille()
+    V = ["w", "r", "n", "write", "read", "nothing"]
+    fic = quest_responses("Read, write or northing", V)
+    if (fic == 'w' or fic == 'write'):
+        nomfic = quest("Save file name for the map (.txt)")
+    if (fic == 'n' or fic == 'w' or fic == 'nothing' or fic == 'write'):
+        length, height = map_size()
     else:
-        nomfic = quest("Nom du fichier de lecture (.txt)")
-        longueur, hauteur = lirecaracmap(nomfic)
-    aff = yesno("Affichage? o/n ")
-    html = yesno("Export Html? o/n")
-    if (html == 'o' or html == 'oui'):
-        nomhtml = quest("Nom du fichier de l export (.html)")
-        nomhtml = nomhtml + ".html"
+        nomfic = quest("File to read (.txt)")
+        length, height = read_map_in_file(nomfic)
+    print_map = yesno("Print map? y/n ")
+    generator = quest_responses("Generator used for generating map", ["v0","heightmap"])
+    generate_resources = yesno("Generate resources? y/n ")
+    export_format = quest_responses("Export format (no, html, img)", ["no", "html", "img"])
+    if (export_format == 'html' or export_format == 'img'):
+        export_file = quest("Export file name (.html)")
+        if export_format == 'img':
+            export_file = export_file + ".png"
+        else:
+            export_file = export_file + ".html"
     # make a dict
-    profile = {
-        "longueur": longueur,
-        "hauteur": hauteur,
-        "aff": aff,
-        "html": html,
-        "fic": fic,
-        "nomhtml": nomhtml
+    profil = {
+        "length": length,
+        "height": height,
+        "print_map": print_map,
+        "mode": "generate",
+        "generate_resources": generate_resources,
+        "generator": generator,
+        "file_map": None,
+        "export_format": export_format,
+        "export_file": export_file,
     }
-    return profile
+    return profil

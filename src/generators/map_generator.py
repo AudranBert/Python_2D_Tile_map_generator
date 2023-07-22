@@ -11,12 +11,12 @@ class MapGenerator():
     
     def init_generator(self, map_object):
         self.map_object = map_object
-        self.hauteur = self.map_object.hauteur
-        self.longueur = self.map_object.longueur
+        self.height = self.map_object.height
+        self.length = self.map_object.length
 
     def get_ratios(self):
         ratio = dict()
-        surface = self.hauteur * self.longueur
+        surface = self.height * self.length
         if surface <= 200:
             nbcont = random.randint(1, 6)
             taillecont = int(surface / 10)
@@ -46,13 +46,13 @@ class MapGenerator():
         for i in range(0, ratio['nbcont']):  # defini le nb de continent
             if (ct < ratio['taillecont']):
                 c = 0
-                x = random.randint(0, self.longueur - 1)
-                y = random.randint(0, self.hauteur - 1)
+                x = random.randint(0, self.length - 1)
+                y = random.randint(0, self.height - 1)
                 while (map_loc[y][x] != ocn and c <= 4):
                     c = c + 1
-                    x = random.randint(0, self.longueur - 1)
-                    y = random.randint(0, self.hauteur - 1)
-                terr = terre
+                    x = random.randint(0, self.length - 1)
+                    y = random.randint(0, self.height - 1)
+                terr = land
                 if (map_loc[y][x] != terr):
                     map_loc[y][x] = terr
                     ct = ct + 1
@@ -99,10 +99,10 @@ class MapGenerator():
 
 
     def generate_snows(self):
-        nord = int((self.hauteur / 10) * 0.5)
-        sud = int((self.hauteur / 10) * 9.5)
-        hns = nord + self.hauteur - sud
-        poles_surface = hns * self.longueur
+        nord = int((self.height / 10) * 0.5)
+        sud = int((self.height / 10) * 9.5)
+        hns = nord + self.height - sud
+        poles_surface = hns * self.length
 
         map_loc = self.map_object.map.copy()
 
@@ -110,21 +110,21 @@ class MapGenerator():
         number_of_snows = max(1, number_of_snows + random.randint(int(-number_of_snows/15), int(number_of_snows/15)))
         max_number_of_snow_per_group = int(100 + self.map_object.get_land_ratio() * poles_surface * 0.02)
         min_number_of_snow_per_group = int(100 + self.map_object.get_land_ratio() * poles_surface * 0.005)
-        terr = neige
+        terr = snow
 
         for i in range(0, number_of_snows):
-            x = random.randint(0, self.longueur - 1)
-            pos1 = random.randint(0, int(nord+random.randint(0,int(self.hauteur/8))))
-            pos2 = random.randint(int(sud+random.randint(int(-self.hauteur/8),0)), self.hauteur-1)
+            x = random.randint(0, self.length - 1)
+            pos1 = random.randint(0, int(nord+random.randint(0,int(self.height/8))))
+            pos2 = random.randint(int(sud+random.randint(int(-self.height/8),0)), self.height-1)
             y = random.choice([pos1, pos2])
             # y = random.randint(int(nord)+random.randint(0, int(self.hauteur/8)), int(sud)+random.randint(int(-self.hauteur/8), 0))
-            while (map_loc[y][x] != terre):
-                x = random.randint(0, self.longueur - 1)
-                pos1 = random.randint(0, int(nord+random.randint(0,int(self.hauteur/8))))
-                pos2 = random.randint(int(sud+random.randint(int(-self.hauteur/8),0)), self.hauteur-1)
+            while (map_loc[y][x] != land):
+                x = random.randint(0, self.length - 1)
+                pos1 = random.randint(0, int(nord+random.randint(0,int(self.height/8))))
+                pos2 = random.randint(int(sud+random.randint(int(-self.height/8),0)), self.height-1)
                 y = random.choice([pos1, pos2])
             tailleC = random.randint(max(100, min_number_of_snow_per_group), max_number_of_snow_per_group)
-            stain = self.create_stain((x, y), tailleC, [terre])
+            stain = self.create_stain((x, y), tailleC, [land])
             for xy in stain:
                 x = xy[0]
                 y = xy[1]
@@ -134,10 +134,10 @@ class MapGenerator():
 
 
     def generate_deserts(self):
-        nord = (self.hauteur / 10) * 4.5
-        sud = (self.hauteur / 10) * 5.5
+        nord = (self.height / 10) * 4.5
+        sud = (self.height / 10) * 5.5
         hns = sud - nord
-        equator_surface = hns * self.longueur
+        equator_surface = hns * self.length
         
         map_loc = self.map_object.map.copy()
         number_of_deserts=  int(self.map_object.get_land_ratio() * equator_surface * 0.0005 )
@@ -147,13 +147,13 @@ class MapGenerator():
         terr = desert
 
         for i in range(0, number_of_deserts):
-            x = random.randint(0, self.longueur - 1)
-            y = random.randint(int(nord)+random.randint(int(-self.hauteur/8), 0), int(sud)+random.randint(0, int(self.hauteur/8)))
-            while (map_loc[y][x] != terre):
-                x = random.randint(0, self.longueur - 1)
-                y = random.randint(int(nord)+random.randint(int(-self.hauteur/8), 0), int(sud)+random.randint(0, int(self.hauteur/8)))
+            x = random.randint(0, self.length - 1)
+            y = random.randint(int(nord)+random.randint(int(-self.height/8), 0), int(sud)+random.randint(0, int(self.height/8)))
+            while (map_loc[y][x] != land):
+                x = random.randint(0, self.length - 1)
+                y = random.randint(int(nord)+random.randint(int(-self.height/8), 0), int(sud)+random.randint(0, int(self.height/8)))
             tailleC = random.randint(max(100, min_number_of_desert_per_group), max_number_of_desert_per_group)
-            stain = self.create_stain((x, y), tailleC, [terre])
+            stain = self.create_stain((x, y), tailleC, [land])
             for xy in stain:
                 x = xy[0]
                 y = xy[1]
@@ -163,10 +163,10 @@ class MapGenerator():
 
     def generate_plains(self):
         map_loc = self.map_object.map.copy()
-        for j in range(0, self.hauteur):
-            for i in range(0, self.longueur):
-                if map_loc[j][i] == terre:
-                    map_loc[j][i] = pln
+        for j in range(0, self.height):
+            for i in range(0, self.length):
+                if map_loc[j][i] == land:
+                    map_loc[j][i] = plain
         return map_loc
 
 
@@ -178,12 +178,12 @@ class MapGenerator():
         max_number_of_hills_per_group =int(min(250, number_of_hills*0.2))
         for i in range(0, number_of_tries):
             if (ct < number_of_hills):
-                x = random.randint(0, self.longueur - 1)
-                y = random.randint(0, self.hauteur - 1)
-                while (map_loc[y][x] not in [neige, pln, desert]):
-                    x = random.randint(0, self.longueur - 1)
-                    y = random.randint(0, self.hauteur - 1)
-                terr = col
+                x = random.randint(0, self.length - 1)
+                y = random.randint(0, self.height - 1)
+                while (map_loc[y][x] not in [snow, plain, desert]):
+                    x = random.randint(0, self.length - 1)
+                    y = random.randint(0, self.height - 1)
+                terr = hill
                 map_loc[y][x] = terr
                 ct = ct + 1
                 tailleC = random.randint(1, max_number_of_hills_per_group)
@@ -193,7 +193,7 @@ class MapGenerator():
                     co = random.randint(0, len(caseadj) - 1)
                     x1 = caseadj[co][0]
                     y1 = caseadj[co][1]
-                    while (map_loc[y1][x1] not in [neige, pln, desert] and c < 5):
+                    while (map_loc[y1][x1] not in [snow, plain, desert] and c < 5):
                         x1 = caseadj[co][0]
                         y1 = caseadj[co][1]
                         co = random.randint(0, len(caseadj) - 1)
@@ -221,12 +221,12 @@ class MapGenerator():
         max_number_of_mountains_per_group =int(min(100, number_of_mountains*0.2))
         for i in range(0, number_of_tries):
             if (ct <number_of_mountains):
-                x = random.randint(0, self.longueur - 1)
-                y = random.randint(0, self.hauteur - 1)
-                while (map_loc[y][x] != col):
-                    x = random.randint(0, self.longueur - 1)
-                    y = random.randint(0, self.hauteur - 1)
-                terr = mont
+                x = random.randint(0, self.length - 1)
+                y = random.randint(0, self.height - 1)
+                while (map_loc[y][x] != hill):
+                    x = random.randint(0, self.length - 1)
+                    y = random.randint(0, self.height - 1)
+                terr = mount
                 map_loc[y][x] = terr
                 ctt = ctt + 1
                 ##        print("taille=",taille)
@@ -248,7 +248,7 @@ class MapGenerator():
                             ##                    print("i=",i)
                             x2 = caseadj1[i][0]
                             y2 = caseadj1[i][1]
-                            if (map_loc[y2][x2] == mont):
+                            if (map_loc[y2][x2] == mount):
                                 ct = ct + 1
                     ##                        print(ct)
                     co = random.randint(0, len(caseadj) - 1)
@@ -265,23 +265,23 @@ class MapGenerator():
 
     def generate_seas(self):
         map_loc = self.map_object.map.copy()
-        for j in range(0, self.hauteur):
-            for i in range(0, self.longueur):
+        for j in range(0, self.height):
+            for i in range(0, self.length):
                 if map_loc[j][i] == ocn:
                     caseadj = self.map_object.caseadjacente(i, j)
                     for b in range(0, len(caseadj)):
                         x1 = caseadj[b][0]
                         y1 = caseadj[b][1]
-                        if map_loc[y1][x1] not in [ocn, mer]:
-                            map_loc[j][i] = mer
+                        if map_loc[y1][x1] not in [ocn, sea]:
+                            map_loc[j][i] = sea
         return map_loc
 
 
     def flatten(self):
         map_loc = self.map_object.map.copy()
-        for j in range(0, self.hauteur):
-            for i in range(0, self.longueur):
-                if map_loc[j][i] in [ocn, mer]:
+        for j in range(0, self.height):
+            for i in range(0, self.length):
+                if map_loc[j][i] in [ocn, sea]:
                     caseadj = self.map_object.caseadjacente(i, j)
                     ct = 0
                     x = 0
@@ -289,7 +289,7 @@ class MapGenerator():
                     for b in range(0, len(caseadj)):
                         x1 = caseadj[b][0]
                         y1 = caseadj[b][1]
-                        if map_loc[y1][x1] in [pln, col, mont, neige, desert]:
+                        if map_loc[y1][x1] in [plain, hill, mount, snow, desert]:
                             ct = ct + 1
                             x = x1
                             y = y1
@@ -297,16 +297,16 @@ class MapGenerator():
                         ran = []
                         for b in range(1, 6):
                             ran.append(map_loc[y][x])
-                        ran.append(lac)
-                        ran.append(marais)
+                        ran.append(lake)
+                        ran.append(swamp)
                         rdn = random.randint(0, len(ran) - 1)
                         map_loc[j][i] = ran[rdn]
                     if ct == 4:
                         ran = []
                         for b in range(1, 10):
                             ran.append(map_loc[y][x])
-                        ran.append(lac)
-                        ran.append(marais)
+                        ran.append(lake)
+                        ran.append(swamp)
                         rdn = random.randint(0, len(ran) - 1)
                         map_loc[j][i] = ran[rdn]
         return map_loc
@@ -320,24 +320,24 @@ class MapGenerator():
         if mapr_loc is None:
             mapr_loc = []
         map_loc = self.map_object.map.copy()
-        for i in range(0, self.hauteur):
+        for i in range(0, self.height):
             mapr_loc.append([])
-            for j in range(0, self.longueur):
+            for j in range(0, self.length):
                 mapr_loc[i].append(0)
-        for i in range(0, self.hauteur):
-            for j in range(0, self.longueur):
+        for i in range(0, self.height):
+            for j in range(0, self.length):
                 ran = []
                 multi = random.randint(2, 5)
                 for b in range(0, multi):
-                    ran.append(ress_rie)
-                if (map_loc[i][j] == ocn or map_loc[i][j] == mer):
+                    ran.append(ress_nothing)
+                if (map_loc[i][j] == ocn or map_loc[i][j] == sea):
                     cto = cto + 1
                     multi = random.randint(0, 1)
                     for b in range(0, multi):
-                        ran.append(ress_poi)
+                        ran.append(ress_fish)
                 n = len(ran)
                 v = random.randint(0, n - 1)
-                if (ran[v] == ress_poi):
+                if (ran[v] == ress_fish):
                     ctp = ctp + 1
                 mapr_loc[i][j] = ran[v]
         if cto == 0:

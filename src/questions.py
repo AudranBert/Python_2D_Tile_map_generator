@@ -12,7 +12,7 @@ def quest_responses(text, V):
     print(text, end='')
     quest = str(input(" ? "))
     while (quest not in V):
-        print("Erreur!")
+        print("Error!")
         print(text, end='')
         quest = str(input(" ? "))
     return quest
@@ -20,42 +20,46 @@ def quest_responses(text, V):
 
 # ini variable fixe
 def question():
-    print("Lecture, ecriture ou rien")
-    fic = str(input("l,e,r : "))
+    print("Read, write, or nothing")
+    fic = str(input("r,w,n : "))
     while (
-        fic != 'r' and fic != 'e' and fic != 'l' and fic != 'lire' and fic != 'lecture' and fic != 'ecrire' and fic != 'ecriture' and fic != 'rien'):
-        print("Erreur!")
-        print("Lecture, ecriture ou rien")
-        fic = str(input("l,e,r : "))
+        fic != 'r' and fic != 'w' and fic != 'n' and fic != 'read' and fic != 'write' and fic != 'nothing'):
+        print("Error!")
+        print("Read, write, or nothing")
+        fic = str(input("r,w,n : "))
     return fic
 
 # question ferme avec verif
 def yesno(text):
     print(text, end='')
     qu = str(input(" : "))
-    while (qu != "n" and qu != "o" and qu != "non" and qu != "oui"):
-        print("Erreur")
+    while (qu != "n" and qu != "y" and qu != "no" and qu != "yes"):
+        print("Error")
         print(text, end='')
         qu = str(input(" : "))
+    if (qu == "n" or qu == "no"):
+        qu = False
+    else:
+        qu = True
     return qu
 
 # taille map
-def taille():
-    print("Taille de votre map")
-    strlongueur = str(input("Longueur : "))
+def map_size():
+    print("Size of the map")
+    strlongueur = str(input("Lenght : "))
     er = re.compile('\D')
     ter = er.match(strlongueur)
     while (ter):
-        print("Erreur ce n'es pas un nombre !")
-        strlongueur = str(input("Longueur : "))
+        print("This is not a number !")
+        strlongueur = str(input("Lenght : "))
         ter = er.match(strlongueur)
     longueur = int(strlongueur)
-    strhauteur = str(input("Hauteur : "))
+    strhauteur = str(input("Height : "))
     er = re.compile('\D')
     ter = er.match(strhauteur)
     while (ter):
-        print("Erreur ce n'es pas un nombre !")
-        strhauteur = str(input("Hauteur : "))
+        print("This is not a number !")
+        strhauteur = str(input("Height : "))
         ter = er.match(strhauteur)
     hauteur = int(strhauteur)
     return longueur, hauteur

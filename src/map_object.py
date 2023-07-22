@@ -4,9 +4,9 @@ from src.parameters import *
 
 class MapObject():
 
-    def __init__(self, longueur, hauteur, map_generator=None, generate_resources=True):
-        self.longueur = longueur
-        self.hauteur = hauteur
+    def __init__(self, length, height, map_generator=None, generate_resources=True):
+        self.length = length
+        self.height = height
         self.map_generator = map_generator
         self.map_generator.init_generator(self)
         print(f"Using '{self.map_generator.__class__.__name__}' as map generator")
@@ -17,29 +17,29 @@ class MapObject():
     
     def initmap(self):
         self.map = []
-        for i in range(0, self.hauteur):
+        for i in range(0, self.height):
             self.map.append([])
-            for j in range(0, self.longueur):
+            for j in range(0, self.length):
                 self.map[i].append(1)
         return self.map
     
     def get_surface(self):
-        return self.longueur * self.hauteur
+        return self.length * self.height
 
     def get_land_ratio(self):
-        total = self.longueur * self.hauteur
+        total = self.length * self.height
         land = 0
-        for i in range(0, self.hauteur):
-            for j in range(0, self.longueur):
-                if self.map[i][j] != ocn and self.map[i][j] != mer:
+        for i in range(0, self.height):
+            for j in range(0, self.length):
+                if self.map[i][j] != ocn and self.map[i][j] != sea:
                     land += 1
         return land/total
 
     def get_hills_qtt(self):
         hills = 0
-        for i in range(0, self.hauteur):
-            for j in range(0, self.longueur):
-                if self.map[i][j] == col:
+        for i in range(0, self.height):
+            for j in range(0, self.length):
+                if self.map[i][j] == hill:
                     hills += 1
         return hills    
 
@@ -54,13 +54,13 @@ class MapObject():
             adj.append(self.map[i][j - 1])
         if (i > 0):
             adj.append(self.map[i - 1][j])
-        if (j < self.longueur - 1):
+        if (j < self.length - 1):
             adj.append(self.map[i][j + 1])
-        if (i < self.hauteur - 1):
+        if (i < self.height - 1):
             adj.append(self.map[i + 1][j])
-        if (j < self.longueur - 2):
+        if (j < self.length - 2):
             diag.append(self.map[i][j + 2])
-        if (i < self.hauteur - 2):
+        if (i < self.height - 2):
             diag.append(self.map[i + 2][j])
         if (j > 1):
             diag.append(self.map[i][j - 2])
@@ -68,11 +68,11 @@ class MapObject():
             diag.append(self.map[i - 2][j])
         if (i > 0 and j > 0):
             diag.append(self.map[i - 1][j - 1])
-        if i > 0 and j < self.longueur - 1:
+        if i > 0 and j < self.length - 1:
             diag.append(self.map[i - 1][j + 1])
-        if (i < self.hauteur - 1 and j > 0):
+        if (i < self.height - 1 and j > 0):
             diag.append(self.map[i + 1][j - 1])
-        if (i < self.hauteur - 1 and j < self.longueur - 1):
+        if (i < self.height - 1 and j < self.length - 1):
             diag.append(self.map[i + 1][j + 1])
         return adj, diag
 
@@ -86,12 +86,12 @@ class MapObject():
         if (i > 0):
             caseadj.append([i - 1, j])
         else:
-            caseadj.append([self.longueur - 1, j])
-        if (j < self.hauteur - 1):
+            caseadj.append([self.length - 1, j])
+        if (j < self.height - 1):
             caseadj.append([i, j + 1])
         ##        else :
         ##                caseadj.append([i,0])
-        if (i < self.longueur - 1):
+        if (i < self.length - 1):
             caseadj.append([i + 1, j])
         else:
             caseadj.append([0, j])
@@ -103,16 +103,16 @@ class MapObject():
         if (j > 0 and i > 0):
             casediag.append([i - 1, j - 1])
         elif (j > 0):
-            casediag.append([self.longueur - 1, j - 1])
-        if (i > 0 and j < self.hauteur - 1):
+            casediag.append([self.length - 1, j - 1])
+        if (i > 0 and j < self.height - 1):
             casediag.append([i - 1, j + 1])
-        elif (j < self.hauteur - 1):
-            casediag.append([self.longueur - 1, j + 1])
-        if (j < self.hauteur - 1 and i < self.longueur - 1):
+        elif (j < self.height - 1):
+            casediag.append([self.length - 1, j + 1])
+        if (j < self.height - 1 and i < self.length - 1):
             casediag.append([i + 1, j + 1])
-        elif (j < self.hauteur - 1):
+        elif (j < self.height - 1):
             casediag.append([0, j + 1])
-        if (i < self.longueur - 1 and j > 0):
+        if (i < self.length - 1 and j > 0):
             casediag.append([i + 1, j - 1])
         elif (j > 0):
             casediag.append([0, j - 1])

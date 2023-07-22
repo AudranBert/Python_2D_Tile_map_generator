@@ -13,8 +13,8 @@ class MapGeneratorHeightmap(MapGenerator):
     
     def init_generator(self, map_object):
         self.map_object = map_object
-        self.hauteur = self.map_object.hauteur
-        self.longueur = self.map_object.longueur
+        self.height = self.map_object.height
+        self.length = self.map_object.length
         self.heightmap = self.generate_heightmap()
 
     def generate_heightmap(self):
@@ -22,11 +22,11 @@ class MapGeneratorHeightmap(MapGenerator):
 
 
         heightmap = []
-        octaves = 8
+        octaves = 32
         freq = 32 * octaves
-        for i in range(0, self.hauteur):
+        for i in range(0, self.height):
             heightmap.append([])
-            for j in range(0, self.longueur):
+            for j in range(0, self.length):
                 heightmap[-1].append(noise.snoise2(j/freq, i/freq, octaves=octaves))
         
         # import matplotlib.pyplot as plt
@@ -41,10 +41,10 @@ class MapGeneratorHeightmap(MapGenerator):
     def generate_lands(self):
         mapr_loc = self.map_object.map.copy()
         sea_level = -0.1
-        for i in range(0, self.hauteur):
-            for j in range(0, self.longueur):
+        for i in range(0, self.height):
+            for j in range(0, self.length):
                 if self.heightmap[i][j] > sea_level:
-                    mapr_loc[i][j] = terre
+                    mapr_loc[i][j] = land
                 else:
                     mapr_loc[i][j] = ocn
         return mapr_loc
@@ -52,17 +52,17 @@ class MapGeneratorHeightmap(MapGenerator):
     def generate_hills(self):
         mapr_loc = self.map_object.map.copy()
         hills_level = 0.33
-        for i in range(0, self.hauteur):
-            for j in range(0, self.longueur):
+        for i in range(0, self.height):
+            for j in range(0, self.length):
                 if self.heightmap[i][j] > hills_level:
-                    mapr_loc[i][j] = col
+                    mapr_loc[i][j] = hill
         return mapr_loc
 
     def generate_mountains(self):
         mapr_loc = self.map_object.map.copy()
         mountain_level = 0.5
-        for i in range(0, self.hauteur):
-            for j in range(0, self.longueur):
+        for i in range(0, self.height):
+            for j in range(0, self.length):
                 if self.heightmap[i][j] > mountain_level:
-                    mapr_loc[i][j] = mont
+                    mapr_loc[i][j] = mount
         return mapr_loc

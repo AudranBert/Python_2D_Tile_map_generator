@@ -1,5 +1,5 @@
-longueur: 2000
-hauteur: 1600
+length: 2000
+height: 1600
 print_map: False
 mode: generate
 generate_resources: False
